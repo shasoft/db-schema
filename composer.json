@@ -15,7 +15,8 @@
         }
     },
     "require": {
-        "shasoft/pdo": "*"
+        "shasoft/pdo": "*",
+        "shasoft/reflection": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^10",
