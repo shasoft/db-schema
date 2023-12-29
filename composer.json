@@ -1,0 +1,40 @@
+{
+    "name": "shasoft/db-schema",
+    "type": "library",
+    "description": "Versioning/migrating database changes",
+    "keywords": [
+        "database",
+        "schema",
+        "migration",
+        "versioning"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Shasoft\\DbSchema\\": "classes"
+        }
+    },
+    "require": {
+        "shasoft/pdo": "*",
+        "shasoft/reflection": "*",
+        "twig/twig": "^3.0",
+        "phpmyadmin/sql-parser": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10",
+        "robiningelbrecht/phpunit-pretty-print": "^1.2",
+        "shasoft/dump": "*"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Shasoft\\DbSchema\\Tests\\": "tests/classes"
+        }
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Shabanov Valera",
+            "email": "shasoft_db-schema@shasoft.com"
+        }
+    ]
+}

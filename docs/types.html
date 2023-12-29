@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>Shasoft\SDemo\SiteDemo</title>
+  <!-- настраиваем служебную информацию для браузеров -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- загружаем Бутстрап -->  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</head>
+<body>
+<h5>Легенда</h5>
+<ul>
+  <li><span style="color:gray">Недоступная для изменения команда</span></li>
+  <li><span style="color:red">Обязательная команда</span></li>
+  <li><span style="color:black">Поддерживаемая команда</span></li>
+</ul>
+<div class="accordion" id="idDatabases">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="panelsStayOpen-heading1">
+      <button 
+        class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#panelsStayOpen-collapse1" aria-expanded="false" aria-controls="panelsStayOpen-collapse1">
+        Таблица
+      </button>
+    </h2>
+    <div id="panelsStayOpen-collapse1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading1">
+        <ul>
+          <li><a href="#8aa061c5" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Table\Table">Table</a></li>
+        </ul>
+        <ul>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="8aa061c5"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Table\Table">Table</strong></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>           
+    </div>
+  </div>
+</div>
+<div class="accordion" id="idDatabases">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="panelsStayOpen-heading2">
+      <button 
+        class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#panelsStayOpen-collapse2" aria-expanded="false" aria-controls="panelsStayOpen-collapse2">
+        Типы колонок
+      </button>
+    </h2>
+    <div id="panelsStayOpen-collapse2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading2">
+        <ul>
+          <li><a href="#7e1f6b0f" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnBinary">ColumnBinary</a> - <i style="color:blue">Двоичные данные</i></li>
+          <li><a href="#eab49bba" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnBoolean">ColumnBoolean</a> - <i style="color:blue">Логическое значение</i></li>
+          <li><a href="#28c75317" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnDatetime">ColumnDatetime</a> - <i style="color:blue">Дата/время</i></li>
+          <li><a href="#6aa57b34" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnDecimal">ColumnDecimal</a> - <i style="color:blue">Число с фиксированной точностью</i></li>
+          <li><a href="#6d324a27" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnEnum">ColumnEnum</a> - <i style="color:blue">Перечисление</i></li>
+          <li><a href="#833c18bc" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnId">ColumnId</a> - <i style="color:blue">Идентификатор</i></li>
+          <li><a href="#d4e15000" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnInteger">ColumnInteger</a> - <i style="color:blue">Целое число</i></li>
+          <li><a href="#48867fe0" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnJson">ColumnJson</a> - <i style="color:blue">Json данные</i></li>
+          <li><a href="#19d7c491" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnReal">ColumnReal</a> - <i style="color:blue">Вещественное число</i></li>
+          <li><a href="#332aacda" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnString">ColumnString</a> - <i style="color:blue">Текст</i></li>
+        </ul>
+        <ul>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="7e1f6b0f"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnBinary">ColumnBinary</strong> - <i>Двоичные данные</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">Binary</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_LOB</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Двоичные данные</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnBinary::output" style="color:DarkCyan">ColumnBinary::output</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxLength" style="color:black">MaxLength</span> = <span style="color:#1299DA">255</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinLength" style="color:black">MinLength</span> = <span style="color:#1299DA">0</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnBinary::value" style="color:DarkCyan">ColumnBinary::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Variable" style="color:black">Variable</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="eab49bba"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnBoolean">ColumnBoolean</strong> - <i>Логическое значение</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">String</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxLength" style="color:gray">MaxLength</span> = <span style="color:#1299DA">1</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinLength" style="color:gray">MinLength</span> = <span style="color:#1299DA">1</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Variable" style="color:gray">Variable</span> = <span style="color:#FF8400">false</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Логическое значение</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnBoolean::input" style="color:DarkCyan">ColumnBoolean::input</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnBoolean::output" style="color:DarkCyan">ColumnBoolean::output</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnBoolean::value" style="color:DarkCyan">ColumnBoolean::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="28c75317"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnDatetime">ColumnDatetime</strong> - <i>Дата/время</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">Datetime</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Дата/время</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnDatetime::input" style="color:DarkCyan">ColumnDatetime::input</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnDatetime::output" style="color:DarkCyan">ColumnDatetime::output</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnDatetime::value" style="color:DarkCyan">ColumnDatetime::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="6aa57b34"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnDecimal">ColumnDecimal</strong> - <i>Число с фиксированной точностью</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Число с фиксированной точностью</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnDecimal::convert" style="color:DarkCyan">ColumnDecimal::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnDecimal::convert" style="color:DarkCyan">ColumnDecimal::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:black">DbSchemaType</span> = <span style="color:green">Decimal</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Precision" style="color:black">Precision</span> = <span style="color:#1299DA">6</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Scale" style="color:black">Scale</span> = <span style="color:#1299DA">4</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnDecimal::value" style="color:DarkCyan">ColumnDecimal::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="6d324a27"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnEnum">ColumnEnum</strong> - <i>Перечисление</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">Enum</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Enum" style="color:red">Enum</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Перечисление</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="833c18bc"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnId">ColumnId</strong> - <i>Идентификатор</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">Integer</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_INT</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\AutoIncrement" style="color:black">AutoIncrement</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Идентификатор</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnInteger::convert" style="color:DarkCyan">ColumnInteger::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnInteger::convert" style="color:DarkCyan">ColumnInteger::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxValue" style="color:black">MaxValue</span> = <span style="color:#1299DA">9223372036854775807</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinValue" style="color:black">MinValue</span> = <span style="color:#1299DA">0</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnInteger::value" style="color:DarkCyan">ColumnInteger::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="d4e15000"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnInteger">ColumnInteger</strong> - <i>Целое число</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">Integer</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_INT</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Целое число</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnInteger::convert" style="color:DarkCyan">ColumnInteger::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnInteger::convert" style="color:DarkCyan">ColumnInteger::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxValue" style="color:black">MaxValue</span> = <span style="color:#1299DA">9223372036854775807</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinValue" style="color:black">MinValue</span> = <span style="color:#1299DA">-9223372036854775808</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnInteger::value" style="color:DarkCyan">ColumnInteger::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\AutoIncrement" style="color:black">AutoIncrement</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="48867fe0"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnJson">ColumnJson</strong> - <i>Json данные</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">String</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Variable" style="color:gray">Variable</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Json данные</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnJson::inputJson" style="color:DarkCyan">ColumnJson::inputJson</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnJson::outputJson" style="color:DarkCyan">ColumnJson::outputJson</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxLength" style="color:black">MaxLength</span> = <span style="color:#1299DA">65535</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinLength" style="color:black">MinLength</span> = <span style="color:#1299DA">1</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\NumberOfSpaces" style="color:black">NumberOfSpaces</span> = <span style="color:#1299DA">0</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="19d7c491"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnReal">ColumnReal</strong> - <i>Вещественное число</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">Real</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Вещественное число</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnReal::convert" style="color:DarkCyan">ColumnReal::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnReal::convert" style="color:DarkCyan">ColumnReal::convert</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxValue" style="color:black">MaxValue</span> = <span style="color:#1299DA">1.7976931348623E+308</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinValue" style="color:black">MinValue</span> = <span style="color:#1299DA">2.2250738585072E-308</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Scale" style="color:black">Scale</span> = <span style="color:#1299DA">2</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnReal::value" style="color:DarkCyan">ColumnReal::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="332aacda"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Column\ColumnString">ColumnString</strong> - <i>Текст</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DbSchemaType" style="color:gray">DbSchemaType</span> = <span style="color:green">String</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\PdoParam" style="color:gray">PdoParam</span> = <span style="color:CadetBlue">PDO::PARAM_STR</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span> = <span style="color:green">Текст</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionOutput" style="color:black">ConversionOutput</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnString::output" style="color:DarkCyan">ColumnString::output</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\DefaultValue" style="color:black">DefaultValue</span> = <span style="color:red">null</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MaxLength" style="color:black">MaxLength</span> = <span style="color:#1299DA">255</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\MinLength" style="color:black">MinLength</span> = <span style="color:#1299DA">1</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\NumberOfSpaces" style="color:black">NumberOfSpaces</span> = <span style="color:#1299DA">0</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Seeder" style="color:black">Seeder</span> = <span data-bs-toggle="tooltip" title="Shasoft\\DbSchema\\Column\\ColumnString::value" style="color:DarkCyan">ColumnString::value</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Variable" style="color:black">Variable</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ConversionInput" style="color:black">ConversionInput</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>           
+    </div>
+  </div>
+</div>
+<div class="accordion" id="idDatabases">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="panelsStayOpen-heading3">
+      <button 
+        class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#panelsStayOpen-collapse3" aria-expanded="false" aria-controls="panelsStayOpen-collapse3">
+        Типы индексов
+      </button>
+    </h2>
+    <div id="panelsStayOpen-collapse3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading3">
+        <ul>
+          <li><a href="#aa2e6d3b" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Index\IndexKey">IndexKey</a> - <i style="color:blue">Неуникальный индекс</i></li>
+          <li><a href="#5407ee65" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Index\IndexPrimary">IndexPrimary</a> - <i style="color:blue">Первичный ключ (индекс)</i></li>
+          <li><a href="#8bf10b44" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Index\IndexUnique">IndexUnique</a> - <i style="color:blue">Уникальный индекс</i></li>
+        </ul>
+        <ul>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="aa2e6d3b"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Index\IndexKey">IndexKey</strong> - <i>Неуникальный индекс</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Columns" style="color:red">Columns</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="5407ee65"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Index\IndexPrimary">IndexPrimary</strong> - <i>Первичный ключ (индекс)</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Columns" style="color:red">Columns</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="8bf10b44"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Index\IndexUnique">IndexUnique</strong> - <i>Уникальный индекс</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Columns" style="color:red">Columns</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>           
+    </div>
+  </div>
+</div>
+<div class="accordion" id="idDatabases">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="panelsStayOpen-heading4">
+      <button 
+        class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#panelsStayOpen-collapse4" aria-expanded="false" aria-controls="panelsStayOpen-collapse4">
+        Типы отношений
+      </button>
+    </h2>
+    <div id="panelsStayOpen-collapse4" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading4">
+        <ul>
+          <li><a href="#38c62ed1" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Relation\RelationManyToOne">RelationManyToOne</a> - <i style="color:blue">Отношение многие-к-одному</i></li>
+          <li><a href="#2cd12803" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Relation\RelationOneToMany">RelationOneToMany</a> - <i style="color:blue">Отношение один-ко-многим</i></li>
+          <li><a href="#104a4f1e" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Relation\RelationOneToOne">RelationOneToOne</a> - <i style="color:blue">Отношение один-к-одному</i></li>
+        </ul>
+        <ul>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="38c62ed1"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Relation\RelationManyToOne">RelationManyToOne</strong> - <i>Отношение многие-к-одному</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\HasOne" style="color:red">HasOne</span> = <span style="color:#FF8400">false</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\HasOneTo" style="color:red">HasOneTo</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Columns" style="color:red">Columns</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelName" style="color:red">RelName</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelTableTo" style="color:red">RelTableTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelNameTo" style="color:black">RelNameTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="2cd12803"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Relation\RelationOneToMany">RelationOneToMany</strong> - <i>Отношение один-ко-многим</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\HasOne" style="color:red">HasOne</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\HasOneTo" style="color:red">HasOneTo</span> = <span style="color:#FF8400">false</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Columns" style="color:red">Columns</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelName" style="color:red">RelName</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelTableTo" style="color:red">RelTableTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelNameTo" style="color:black">RelNameTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="104a4f1e"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Relation\RelationOneToOne">RelationOneToOne</strong> - <i>Отношение один-к-одному</i></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\HasOne" style="color:red">HasOne</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\HasOneTo" style="color:red">HasOneTo</span> = <span style="color:#FF8400">true</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Columns" style="color:red">Columns</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelName" style="color:red">RelName</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelTableTo" style="color:red">RelTableTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\RelNameTo" style="color:black">RelNameTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Type" style="color:black">Type</span>                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>           
+    </div>
+  </div>
+</div>
+<div class="accordion" id="idDatabases">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="panelsStayOpen-heading5">
+      <button 
+        class="accordion-button collapsed" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#panelsStayOpen-collapse5" aria-expanded="false" aria-controls="panelsStayOpen-collapse5">
+        Ссылка на поле таблицы
+      </button>
+    </h2>
+    <div id="panelsStayOpen-collapse5" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading5">
+        <ul>
+          <li><a href="#a43b03d6" data-bs-toggle="tooltip" title="Shasoft\DbSchema\Reference\Reference">Reference</a></li>
+        </ul>
+        <ul>
+          <li>
+            <div style="padding:4px;border:1px dashed blue">
+              <a name="a43b03d6"></a>
+              <div style="color:blue"><strong data-bs-toggle="tooltip" title="Shasoft\DbSchema\Reference\Reference">Reference</strong></div>
+              <ul>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\ReferenceTo" style="color:red">ReferenceTo</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Comment" style="color:black">Comment</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Create" style="color:black">Create</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Drop" style="color:black">Drop</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Migration" style="color:black">Migration</span>                </li>
+                <li>
+                  <span data-bs-toggle="tooltip" title="Shasoft\DbSchema\Command\Name" style="color:black">Name</span>                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>           
+    </div>
+  </div>
+</div>
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })  
+  </script>
+</body>
+</html>
