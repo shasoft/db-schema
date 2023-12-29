@@ -3,6 +3,8 @@
 use Shasoft\Pdo\PdoLog;
 use Shasoft\Pdo\SqlFormat;
 use Shasoft\Filesystem\File;
+use Shasoft\DbSchemaDoc\HtmlDiff;
+use Shasoft\DbSchemaDoc\HtmlTypes;
 use Shasoft\DbSchema\Command\TabName;
 use Shasoft\DbSchema\Tests\Table\User;
 use Shasoft\DbSchema\Column\ColumnReal;
@@ -12,11 +14,9 @@ use Shasoft\DbSchema\Tests\Table\TabTest;
 use Shasoft\DbSchema\DbSchemaStateManager;
 use Shasoft\DbSchema\Tests\Table\AllTypes;
 use Shasoft\DbSchema\Tests\Table\ForSeeder;
-use Shasoft\DbSchema\Documentation\HtmlDiff;
 use Shasoft\DbSchema\Tests\Table\AllChanges;
 use Shasoft\DbSchema\Tests\Table\AllIndexes;
 use Shasoft\DbSchema\Tests\Table\TabExample;
-use Shasoft\DbSchema\Documentation\HtmlTypes;
 use Shasoft\DbSchema\Tests\Table\TabExample1;
 use Shasoft\DbSchema\Tests\Table\TabExample2;
 use Shasoft\DbSchema\Tests\Table\TabExample3;
@@ -24,6 +24,7 @@ use Shasoft\DbSchema\Tests\Table\TabExample4;
 use Shasoft\DbSchema\Tests\Table\TabExample5;
 use Shasoft\DbSchema\Tests\Table\TabReference;
 use Shasoft\Pdo\Connection\PdoConnectionMySql;
+use Shasoft\DbSchema\Tests\Table\AllMigrations;
 use Shasoft\DbSchema\Tests\Table\TabReference1;
 use Shasoft\DbSchema\Tests\Table\TabReference2;
 use Shasoft\DbSchema\Driver\DbSchemaDriverMySql;
@@ -69,8 +70,8 @@ s_dump_run(function () {
         [
             //Article::class, User::class,
             //TabTest::class,
-            AllTypes::class,
-            //AllChanges::class,
+            //AllTypes::class,
+            AllMigrations::class,
             //AllIndexes::class,
             //ForSeeder::class,
             //TabExample5::class,
@@ -130,8 +131,15 @@ s_dump_run(function () {
             $rowsSelectOutput
         );
     }
-    File::save(__DIR__ . '/../../docs/types.html', (string)new HtmlTypes());
-    //echo (string)new HtmlTypes(); exit(0);
-    //s_dd($migrations, unserialize(serialize($migrations)));
-    echo (string)new HtmlDiff($migrations->all());
+    /*
+    $htmlTypes = new HtmlTypes([__DIR__ . '/../../classes']);
+    $htmlTypes->save(__DIR__ . '/../../docs/~/db-schema.html');
+    echo (string)$htmlTypes;
+    exit(0);
+    //*/
+    /*
+    $htmlMigrations = new HtmlDiff($migrations->all());
+    $htmlMigrations->save(__DIR__ . '/../../docs/~/db-schema-all-migrations.html');
+    echo (string)$htmlMigrations;
+    //*/
 });
