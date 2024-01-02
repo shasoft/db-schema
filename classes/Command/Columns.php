@@ -2,7 +2,7 @@
 
 namespace Shasoft\DbSchema\Command;
 
-use Shasoft\Pdo\PdoConnection;
+use Shasoft\DbSchema\DbSchemaDriver;
 
 // Список колонок(полей)
 class Columns extends Base
@@ -24,12 +24,12 @@ class Columns extends Base
         return $this->columns;
     }
     // Получить список полей
-    public function fields(PdoConnection $connection): array
+    public function fields(DbSchemaDriver $driver): array
     {
-        return array_map(function ($fieldname) use ($connection) {
+        return array_map(function ($fieldname) use ($driver) {
             $tmpOrder = explode(':', $fieldname);
             $tmp = explode('(', $tmpOrder[0]);
-            $ret = $connection->quote($tmp[0]);
+            $ret = $driver->quote($tmp[0]);
             if (count($tmp) > 1) {
                 $ret .= '(' . intval(trim($tmp[1])) . ')';
             }

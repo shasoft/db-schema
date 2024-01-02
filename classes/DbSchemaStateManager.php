@@ -8,7 +8,7 @@ use Shasoft\DbSchema\Table\Table;
 use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\Command\Name;
 use Shasoft\DbSchema\Command\Type;
-use Shasoft\Reflection\Reflection;
+use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Command\AutoIncrement;
 use Shasoft\DbSchema\Command\Migration;

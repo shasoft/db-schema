@@ -2,7 +2,6 @@
 
 namespace Shasoft\DbSchema;
 
-use Shasoft\Pdo\PdoConnection;
 use Shasoft\DbSchema\Command\Id;
 use Shasoft\DbSchema\State\StateIndex;
 use Shasoft\DbSchema\State\StateTable;
@@ -14,13 +13,6 @@ use Shasoft\DbSchema\Exceptions\DbSchemaExceptionCommandHasBeenRemovedFromState;
 // Драйвер миграций
 abstract class DbSchemaDriver
 {
-    // PDO соединение 
-    protected PdoConnection $pdoConnection;
-    // Конструктор
-    public function __construct(string $pdoConnectionClass)
-    {
-        $this->pdoConnection = new $pdoConnectionClass([]);
-    }
     // Сгенерировать набор команд для перевода состояние $from в состояние $to
     public function diff(?StateDatabase $from, ?StateDatabase $to): array
     {
@@ -206,12 +198,11 @@ abstract class DbSchemaDriver
         }
         return $ret;
     }
-    // Имя класса Pdo соединения
-    public function pdoConnectionClass(): string
-    {
-        return get_class($this->pdoConnection);
-    }
     /////// Методы ////////////
+    // Поддерживаемые PDO драйверы
+    abstract public function pdoSupport(): array;
+    // Заключить имя таблицы/колонки в кавычки
+    abstract public function quote(string $name): string;
     // Имя таблицы
     public function tabname(string $classname): string
     {
@@ -221,7 +212,12 @@ abstract class DbSchemaDriver
     // Создание таблицы
     abstract protected function onTableCreate(StateTable $state): array;
     // Удаление таблицы
-    abstract protected function onTableDrop(StateTable $state): array;
+    protected function onTableDrop(StateTable $state): array
+    {
+        return [
+            'DROP TABLE IF EXISTS ' . $this->quote($this->tabname($state->name()))
+        ];
+    }
     // Изменение таблицы
     abstract protected function onTableChange(StateTable $stateFrom, StateTable $stateTo, DbSchemaCommandsChanges $changeCommands): array;
     /////// Колонка ////////////
@@ -237,5 +233,11 @@ abstract class DbSchemaDriver
     // Удаление индекса
     abstract protected function onIndexDrop(StateIndex $state): array;
     // Изменение индекса
-    abstract protected function onIndexChange(StateIndex $stateFrom, StateIndex $stateTo, DbSchemaCommandsChanges $changeCommands): array;
+    protected function onIndexChange(StateIndex $stateFrom, StateIndex $stateTo, DbSchemaCommandsChanges $changeCommands): array
+    {
+        return array_merge(
+            $this->onIndexDrop($stateFrom),
+            $this->onIndexCreate($stateTo)
+        );
+    }
 };

@@ -3,7 +3,7 @@
 namespace Shasoft\DbSchema\State;
 
 use Shasoft\DbSchema\Command\Comment;
-use Shasoft\Reflection\Reflection;
+use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\Command\RelName;
 use Shasoft\DbSchema\Command\HasOne;
 use Shasoft\DbSchema\Command\RelTable;

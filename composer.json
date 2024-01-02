@@ -14,14 +14,11 @@
             "Shasoft\\DbSchema\\": "classes"
         }
     },
-    "require": {
-        "shasoft/pdo": "*",
-        "shasoft/reflection": "*"
-    },
     "require-dev": {
         "phpunit/phpunit": "^10",
-        "shasoft/db-schema-doc": "*",
+        "shasoft/db-schema-dev": "*",
         "robiningelbrecht/phpunit-pretty-print": "^1.2",
+        "shasoft/db-tool": "*",
         "shasoft/dump": "*"
     },
     "autoload-dev": {

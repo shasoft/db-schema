@@ -2,7 +2,7 @@
 
 namespace Shasoft\DbSchema\Exceptions;
 
-use Shasoft\Reflection\Reflection;
+use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\DbSchemaState;
 use Shasoft\DbSchema\DbSchemaException;
 
@@ -20,7 +20,7 @@ class DbSchemaExceptionRequiredCommandNotDefined extends DbSchemaException
     {
         if ($state->has(Type::class)) {
             $classname = $state->get(Type::class)->value();
-            foreach (array_keys(Reflection::getObjectPropertyValue(new $classname, 'requiredCommands', [])) as $requiredCommand) {
+            foreach (array_keys(DbSchemaReflection::getObjectPropertyValue(new $classname, 'requiredCommands', [])) as $requiredCommand) {
                 if (!$state->has($requiredCommand)) {
                     throw new static($requiredCommand, $classname, $tableClass);
                 }

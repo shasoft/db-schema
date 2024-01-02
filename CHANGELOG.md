@@ -9,3 +9,11 @@ CHANGE LOG
 
 ## v1.0.2 (2023-12-29)
 * Добавил в зависимости пакет [shasoft/reflection](https://github.com/shasoft/reflection)
+
+## v1.0.3
+* Добавил команду для указания источника определения отношения Origin
+* Доработал генератор для ColumnString
+
+## v2.0 (2024-01-02)
+* Убрал все зависимости. 
+* Переписал для работы с [PDO](https://www.php.net/manual/ru/book.pdo.php)

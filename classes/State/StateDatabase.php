@@ -2,32 +2,34 @@
 
 namespace Shasoft\DbSchema\State;
 
-use Shasoft\Reflection\Reflection;
 use Shasoft\DbSchema\Command\Id;
 use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\Command\Type;
-use Shasoft\DbSchema\Index\IndexKey;
+use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\DbSchemaState;
-use Shasoft\DbSchema\Command\RelName;
 use Shasoft\DbSchema\Command\HasOne;
+use Shasoft\DbSchema\Command\Origin;
 use Shasoft\DbSchema\DbSchemaDriver;
+use Shasoft\DbSchema\Index\IndexKey;
+use Shasoft\DbSchema\Command\Columns;
+use Shasoft\DbSchema\Command\RelName;
+use Shasoft\DbSchema\Command\HasOneTo;
 use Shasoft\DbSchema\Command\RelTable;
 use Shasoft\DbSchema\State\StateTable;
 use Shasoft\DbSchema\Command\RelNameTo;
-use Shasoft\DbSchema\Command\HasOneTo;
 use Shasoft\DbSchema\Index\IndexUnique;
-use Shasoft\DbSchema\DbSchemaRelationDirection;
 use Shasoft\DbSchema\Command\RelTableTo;
-use Shasoft\DbSchema\Command\Columns;
+use Shasoft\DbSchema\DbSchemaMigrations;
 use Shasoft\DbSchema\State\StateCommands;
 use Shasoft\DbSchema\State\StateRelation;
+use Shasoft\DbSchema\DbSchemaRelationDirection;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionTableIsMissingInTheDatabase;
 
 // Состояние базы данных
 class StateDatabase extends StateCommands
 {
-    // Тип соединения
-    protected string $typeConnection;
+    // Поддерживаемые PDO соединения
+    protected array $pdoSupport;
     // Список таблиц
     protected array $tables = [];
     // Список удаленных объектов
@@ -61,8 +63,18 @@ class StateDatabase extends StateCommands
                     $stateCommands->value(HasOneTo::class)
                 );
                 //
-                $relations[] = new StateRelation($this, $from, $to, $relation->commands());
-                $relations[] = new StateRelation($this, $to, $from, $relation->commands());
+                $relations[] = new StateRelation(
+                    $this,
+                    $from,
+                    $to,
+                    array_merge($relation->commands(), [Origin::class => new Origin])
+                );
+                $relations[] = new StateRelation(
+                    $this,
+                    $to,
+                    $from,
+                    $relation->commands()
+                );
             }
         }
         // Разобрать отношения по таблицам с указаниям источника
@@ -139,10 +151,10 @@ class StateDatabase extends StateCommands
         }
         return $ret;
     }
-    // Тип соединения
-    public function typeConnection(): string
+    // Драйвер PDO поддерживается?
+    public function hasPdoSupport(string $name): bool
     {
-        return $this->typeConnection;
+        return in_array($name, $this->pdoSupport, true);
     }
     // Список таблиц
     public function tables(): array
@@ -178,7 +190,7 @@ class StateDatabase extends StateCommands
         $tabNames = array_unique($tabNames);
         $stateDatabases[] = null;
         $stateDatabases = array_reverse($stateDatabases);
-        $refMethodDiffInt = Reflection::getObjectMethod($driver, 'diffInt');
+        $refMethodDiffInt = DbSchemaReflection::getObjectMethod($driver, 'diffInt');
         foreach ($tabNames as $tabname) {
             for ($i = 1; $i < count($stateDatabases); $i++) {
                 $up = $refMethodDiffInt->invoke($driver, $stateDatabases[$i - 1], $stateDatabases[$i], $tabname);
@@ -194,7 +206,7 @@ class StateDatabase extends StateCommands
                         $state->parent = null;
                         // Удалить из таблиц все удаленные объекты
                         foreach ($state->tables() as $table) {
-                            Reflection::getObjectProperty($table, 'drops')->setValue($table, []);
+                            DbSchemaReflection::getObjectProperty($table, 'drops')->setValue($table, []);
                         }
                         //
                         $ret[$name] = [
@@ -220,5 +232,16 @@ class StateDatabase extends StateCommands
         });
         //
         return $ret;
+    }
+    // Очистки БД (удаление ДАННЫХ всех таблиц[кроме таблицы миграций])
+    public function clear(\PDO $pdo): void
+    {
+        /*
+        foreach ($pdoConnection->tables() as $tabname) {
+            if ($tabname != DbSchemaMigrations::getTechTable()) {
+                $pdoConnection->sql($pdoConnection->sqlClearTable($tabname))->exec();
+            }
+        }
+        //*/
     }
 };

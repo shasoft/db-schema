@@ -3,30 +3,32 @@
 use Shasoft\Pdo\PdoLog;
 use Shasoft\Pdo\SqlFormat;
 use Shasoft\Filesystem\File;
-use Shasoft\DbSchemaDoc\HtmlDiff;
-use Shasoft\DbSchemaDoc\HtmlTypes;
+use Shasoft\DbTool\DbToolPdo;
+use Shasoft\DbSchemaDev\HtmlDiff;
+use Shasoft\DbSchemaDev\HtmlTypes;
+use Shasoft\DbSchemaDev\Table\User;
 use Shasoft\DbSchema\Command\TabName;
-use Shasoft\DbSchema\Tests\Table\User;
+use Shasoft\DbSchemaDev\Table\Article;
+use Shasoft\DbSchemaDev\Table\TabTest;
 use Shasoft\DbSchema\Column\ColumnReal;
+use Shasoft\DbSchemaDev\Table\AllTypes;
 use Shasoft\DbSchema\DbSchemaMigrations;
-use Shasoft\DbSchema\Tests\Table\Article;
-use Shasoft\DbSchema\Tests\Table\TabTest;
+use Shasoft\DbSchemaDev\DbSchemaDevTool;
+use Shasoft\DbSchemaDev\Table\ForSeeder;
+use Shasoft\DbSchemaDev\Table\AllChanges;
+use Shasoft\DbSchemaDev\Table\AllIndexes;
+use Shasoft\DbSchemaDev\Table\TabExample;
 use Shasoft\DbSchema\DbSchemaStateManager;
-use Shasoft\DbSchema\Tests\Table\AllTypes;
-use Shasoft\DbSchema\Tests\Table\ForSeeder;
-use Shasoft\DbSchema\Tests\Table\AllChanges;
-use Shasoft\DbSchema\Tests\Table\AllIndexes;
-use Shasoft\DbSchema\Tests\Table\TabExample;
-use Shasoft\DbSchema\Tests\Table\TabExample1;
-use Shasoft\DbSchema\Tests\Table\TabExample2;
-use Shasoft\DbSchema\Tests\Table\TabExample3;
-use Shasoft\DbSchema\Tests\Table\TabExample4;
-use Shasoft\DbSchema\Tests\Table\TabExample5;
-use Shasoft\DbSchema\Tests\Table\TabReference;
+use Shasoft\DbSchemaDev\Table\TabExample1;
+use Shasoft\DbSchemaDev\Table\TabExample2;
+use Shasoft\DbSchemaDev\Table\TabExample3;
+use Shasoft\DbSchemaDev\Table\TabExample4;
+use Shasoft\DbSchemaDev\Table\TabExample5;
+use Shasoft\DbSchemaDev\Table\TabReference;
+use Shasoft\DbSchemaDev\Table\AllMigrations;
+use Shasoft\DbSchemaDev\Table\TabReference1;
+use Shasoft\DbSchemaDev\Table\TabReference2;
 use Shasoft\Pdo\Connection\PdoConnectionMySql;
-use Shasoft\DbSchema\Tests\Table\AllMigrations;
-use Shasoft\DbSchema\Tests\Table\TabReference1;
-use Shasoft\DbSchema\Tests\Table\TabReference2;
 use Shasoft\DbSchema\Driver\DbSchemaDriverMySql;
 use Shasoft\Pdo\Connection\PdoConnectionPostgreSql;
 use Shasoft\DbSchema\Driver\DbSchemaDriverPostgreSql;
@@ -46,13 +48,28 @@ s_dd(
 //*/
 
 s_dump_run(function () {
-    // Создать соединение
-    //*
+    // Создать PDO соединение
+    $pdo = new \PDO('mysql:dbname=cmg-db-test;host=localhost', 'root');
+    // Драйвер
+    $driver = new DbSchemaDriverMySql;
+    /*
     $pdoConnection = new PdoConnectionMySql([
         'dbname' => 'cmg-db-test',
         'host' => 'localhost',
         'username' => 'root'
     ]);
+    //$pdo = new \PDO('pgsql:dbname=cmg-db-test;host=localhost', 'postgres', '123');
+    $pdoStatement =  $pdo->prepare('SELECT * FROM `@migrations`');
+    $pdoStatement->execute();
+    $rows = $pdoStatement->fetch(\PDO::FETCH_ASSOC);
+    s_dd($pdoStatement, $rows);
+    s_dd(
+        $rows,
+        $pdoConnection,
+        $pdo,
+        $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME),
+        $pdo->quote('tabName')
+    );
     //*/
     /*
     $pdoConnection = new PdoConnectionPostgreSql([
@@ -63,7 +80,7 @@ s_dump_run(function () {
     ]);
     //*/
     // Удалить всё из БД
-    $pdoConnection->reset();
+    DbToolPdo::reset($pdo);
     // Получить миграции
     //xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY + XHPROF_FLAGS_NO_BUILTINS);
     $migrations = DbSchemaMigrations::get(
@@ -71,14 +88,14 @@ s_dump_run(function () {
             //Article::class, User::class,
             //TabTest::class,
             //AllTypes::class,
-            AllMigrations::class,
+            //AllMigrations::class,
             //AllIndexes::class,
-            //ForSeeder::class,
+            ForSeeder::class,
             //TabExample5::class,
             //TabReference1::class,
             //TabReference2::class
         ],
-        DbSchemaDriverMySql::class
+        get_class($driver)
     );
     /*
     $xhprof_data = xhprof_disable();
@@ -96,25 +113,27 @@ s_dump_run(function () {
     // Вывод для отладки
     //$migrations->dump();
     // Выполнить миграции
-    $migrations->run($pdoConnection);
+    $migrations->run($pdo);
 
     // Отменить последнюю миграцию
     /*
     $rc = 1;
     while ($rc != 0) {
-        $rc = $migrations->cancel($pdoConnection);
+        $rc = $migrations->cancel($pdo);
         s_dump($rc);
     }
     //*/
+    s_dump($migrations, $migrations->database());
+
     // Сгенерировать данные
     if ($migrations->database()->hasTable(ForSeeder::class)) {
         $table = $migrations->database()->table(ForSeeder::class);
+        // Сгенерировать данные
         $rows = $table->seeder(1, 0);
-        //$rows[0]['id'] = pg_escape_string($rows[0]['id']);
-        //$rows[0]['boolean'] = null;
-        PdoLog::clear();
-        $cntInsert = $table->insert($pdoConnection, $rows);
-        $rowsSelect = $pdoConnection->sql('SELECT * FROM ' . $pdoConnection->quote($table->value(TabName::class)))->exec()->fetch();
+        // Вставить
+        $cntInsert = DbSchemaDevTool::insert($pdo, $table, $rows);
+        // Выбрать
+        $rowsSelect = DbToolPdo::query($pdo, 'SELECT * FROM ' . $driver->quote($table->value(TabName::class)));
         $rowsSelectOutput = [];
         foreach ($rowsSelect as $row) {
             $rowOutput = [];
@@ -123,8 +142,8 @@ s_dump_run(function () {
             }
             $rowsSelectOutput[] = $rowOutput;
         }
-        echo PdoLog::getLog();
-        s_dd(
+        //echo PdoLog::getLog();
+        s_dump(
             $rows,
             $cntInsert,
             $rowsSelect,

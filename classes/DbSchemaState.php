@@ -3,7 +3,7 @@
 namespace Shasoft\DbSchema;
 
 use Shasoft\DbSchema\Table\Table;
-use Shasoft\Reflection\Reflection;
+use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\Command\Type;
 use Shasoft\DbSchema\Command\Migration;
@@ -83,11 +83,11 @@ class DbSchemaState extends StateCommands
             // Добавление через объект (чтобы там отработали события)
             $object = $this->getValue('object');
             // Получить свойство объекта
-            $refProperty = Reflection::getObjectProperty($object, 'commands');
+            $refProperty = DbSchemaReflection::getObjectProperty($object, 'commands');
             // Обчистить список команд
             $refProperty->setValue($object, []);
             // Получить метод
-            $refMethod = Reflection::getObjectMethod($object, 'setCommand');
+            $refMethod = DbSchemaReflection::getObjectMethod($object, 'setCommand');
             // Записать текущие команды
             foreach ($this->commands() as $_command) {
                 $refMethod->invoke($object, $_command, false);
@@ -95,13 +95,13 @@ class DbSchemaState extends StateCommands
             // Сохранить список текущих команд
             $commandIds = array_flip(array_map(function ($_command) {
                 return spl_object_id($_command);
-            }, Reflection::getObjectPropertyValue($object, 'commands', [])));
+            }, DbSchemaReflection::getObjectPropertyValue($object, 'commands', [])));
             // Добавить текущую команду
             $refMethod->invoke($object, $command, false);
             // Команды
-            $commands = Reflection::getObjectPropertyValue($object, 'commands', []);
+            $commands = DbSchemaReflection::getObjectPropertyValue($object, 'commands', []);
             // Если появились новые команды в объекте, то их добавить в список
-            foreach (Reflection::getObjectPropertyValue($object, 'commands', []) as $_command) {
+            foreach (DbSchemaReflection::getObjectPropertyValue($object, 'commands', []) as $_command) {
                 if (!array_key_exists(spl_object_id($_command), $commandIds)) {
                     $this->commands[]  = $_command;
                 }
@@ -122,7 +122,7 @@ class DbSchemaState extends StateCommands
             $object = new $classname;
             $this->setValue('object', $object);
             // Команды объекта
-            $commands = Reflection::getObjectPropertyValue($object, 'commands', []);
+            $commands = DbSchemaReflection::getObjectPropertyValue($object, 'commands', []);
             // Команды из атрибутов
             foreach ($commands as $name => $_command) {
                 // Установить команду
@@ -150,7 +150,7 @@ class DbSchemaState extends StateCommands
     protected function setCommandFromClassname(string $classname): void
     {
         // Команды объекта
-        $commands = Reflection::getObjectPropertyValue(new $classname, 'commands', null);
+        $commands = DbSchemaReflection::getObjectPropertyValue(new $classname, 'commands', null);
         // Команды из атрибутов
         foreach ($commands as $name => $command) {
             // Установить команду
@@ -195,7 +195,7 @@ class DbSchemaState extends StateCommands
     public function addCommandFromAttributes(array $attributes, string $classname): void
     {
         // Получить список поддерживаемых команд
-        $supportCommands = Reflection::getObjectPropertyValue(new $classname, 'supportCommands', null);
+        $supportCommands = DbSchemaReflection::getObjectPropertyValue(new $classname, 'supportCommands', null);
         // Команды из атрибутов
         foreach ($attributes as $attribute) {
             // Класс команды

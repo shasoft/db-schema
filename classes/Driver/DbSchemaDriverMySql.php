@@ -23,20 +23,12 @@ use Shasoft\DbSchema\Index\IndexPrimary;
 use Shasoft\DbSchema\Command\DefaultValue;
 use Shasoft\DbSchema\Command\AutoIncrement;
 use Shasoft\DbSchema\DbSchemaCommandsChanges;
-use Shasoft\Pdo\Connection\PdoConnectionMySql;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionNotImplemented;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionSqlDataTypeNotSupported;
 
 // Драйвер миграций MySql
 class DbSchemaDriverMySql extends DbSchemaDriver
 {
-    // Конструктор
-    public function __construct()
-    {
-        // Вызвать конструктор родителя
-        parent::__construct(PdoConnectionMySql::class);
-        //
-    }
     // Получить тип для колонки
     // https://metanit.com/sql/postgresql/2.3.php
     // https://www.postgresql.org/docs/current/datatype-numeric.html
@@ -174,7 +166,7 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         // Список полей
         $fields = array_map(function ($fieldname) {
             $tmp = explode('(', $fieldname);
-            $ret = $this->pdoConnection->quote($tmp[0]);
+            $ret = $this->quote($tmp[0]);
             if (count($tmp) > 1) {
                 $ret .= '(' . intval(trim($tmp[1])) . ')';
             }
@@ -184,11 +176,11 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         $ret = self::$typesMap[$index->type()];
         // Имя
         if ($index->type() != IndexPrimary::class) {
-            $ret .= ' ' . $this->pdoConnection->quote($index->name());
+            $ret .= ' ' . $this->quote($index->name());
         }
         // Список полей
         //$ret .= ' (' . implode(',', $fields) . ')';
-        $ret .= ' (' . implode(',', $index->get(Columns::class)->fields($this->pdoConnection)) . ')';
+        $ret .= ' (' . implode(',', $index->get(Columns::class)->fields($this)) . ')';
 
         // Алгоритм
         $ret .= ' USING BTREE';
@@ -196,6 +188,16 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         return $ret;
     }
     /////// Методы ////////////
+    // Поддерживаемые PDO драйверы
+    public function pdoSupport(): array
+    {
+        return ['mysql'];
+    }
+    // Заключить имя таблицы/колонки в кавычки
+    public function quote(string $name): string
+    {
+        return '`' . $name . '`';
+    }
     /////// Таблица ////////////
     // Создание таблицы
     protected function onTableCreate(StateTable $state): array
@@ -204,25 +206,18 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         //-- Установить таблицу
         $lines = [];
         foreach ($state->columns(0) as $key => $column) {
-            $lines[] = $this->pdoConnection->quote($column->name()) . ' ' . $this->sqlForColumn($column);
+            $lines[] = $this->quote($column->name()) . ' ' . $this->sqlForColumn($column);
         }
         foreach ($state->indexes() as $key => $index) {
             $lines[] = $this->sqlForIndex($index);
         }
-        $sql = "CREATE TABLE " . $this->pdoConnection->quote($this->tabname($state->name())) . " (\n" . implode(", \n", $lines) . "\n )";
+        $sql = "CREATE TABLE " . $this->quote($this->tabname($state->name())) . " (\n" . implode(", \n", $lines) . "\n )";
         // Комментарий
         $state->valueHas($sql, Comment::class, function (string &$sql, string $value) {
             $sql .= ' COMMENT ' . "'" . addslashes($value) . "'";
         });
         $sql .= ';';
         return [$sql];
-    }
-    // Удаление таблицы
-    protected function onTableDrop(StateTable $state): array
-    {
-        return [
-            $this->pdoConnection->sqlDropTable($this->tabname($state->name()))
-        ];
     }
     // Изменение таблицы
     protected function onTableChange(StateTable $stateFrom, StateTable $stateTo, DbSchemaCommandsChanges $changeCommands): array
@@ -231,7 +226,7 @@ class DbSchemaDriverMySql extends DbSchemaDriver
             if ($changeCommands->has(Comment::class)) {
                 return [
                     'ALTER TABLE ' .
-                        $this->pdoConnection->quote($this->tabname($stateTo->name())) .
+                        $this->quote($this->tabname($stateTo->name())) .
                         ' COMMENT ' . "'" . addslashes($stateTo->comment()) . "'"
                 ];
             }
@@ -246,9 +241,9 @@ class DbSchemaDriverMySql extends DbSchemaDriver
     {
         return [
             'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($state->table()->name())) .
+                $this->quote($this->tabname($state->table()->name())) .
                 ' ADD ' .
-                $this->pdoConnection->quote($state->name()) .
+                $this->quote($state->name()) .
                 ' ' .
                 $this->sqlForColumn($state)
         ];
@@ -258,9 +253,9 @@ class DbSchemaDriverMySql extends DbSchemaDriver
     {
         return [
             'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($state->table()->name())) .
+                $this->quote($this->tabname($state->table()->name())) .
                 ' DROP COLUMN ' .
-                $this->pdoConnection->quote($state->name()) . ';'
+                $this->quote($state->name()) . ';'
         ];
     }
     // Изменение колонки
@@ -271,11 +266,11 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         if ($changeCommands->has(Name::class)) {
             return [
                 'ALTER TABLE ' .
-                    $this->pdoConnection->quote($this->tabname($stateTo->table()->name())) .
+                    $this->quote($this->tabname($stateTo->table()->name())) .
                     ' CHANGE ' .
-                    $this->pdoConnection->quote($stateFrom->name()) .
+                    $this->quote($stateFrom->name()) .
                     ' ' .
-                    $this->pdoConnection->quote($stateTo->name()) .
+                    $this->quote($stateTo->name()) .
                     ' ' .
                     $this->sqlForColumn($stateTo) .
                     ';'
@@ -283,9 +278,9 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         } else {
             return [
                 'ALTER TABLE ' .
-                    $this->pdoConnection->quote($this->tabname($stateTo->table()->name())) .
+                    $this->quote($this->tabname($stateTo->table()->name())) .
                     ' MODIFY ' .
-                    $this->pdoConnection->quote($stateTo->name()) .
+                    $this->quote($stateTo->name()) .
                     //' ' .
                     $this->sqlForColumn($stateTo)
             ];
@@ -298,7 +293,7 @@ class DbSchemaDriverMySql extends DbSchemaDriver
     {
         // SQL код создания индекса
         //ALTER TABLE `shasoft-migration-tests-table-article`	ADD INDEX `author` (`userId`);
-        $sql = 'ALTER TABLE ' . $this->pdoConnection->quote($this->tabname($state->table()->name())) . ' ADD ' . $this->sqlForIndex($state);
+        $sql = 'ALTER TABLE ' . $this->quote($this->tabname($state->table()->name())) . ' ADD ' . $this->sqlForIndex($state);
         return [$sql];
     }
     // Удаление индекса
@@ -306,20 +301,12 @@ class DbSchemaDriverMySql extends DbSchemaDriver
     {
         // DROP INDEX `PRIMARY` ON t;
         // ALTER TABLE `shasoft-migration-tests-table-article` DROP INDEX `author`;
-        $sql = 'ALTER TABLE ' . $this->pdoConnection->quote($this->tabname($state->table()->name())) . ' DROP INDEX ';
+        $sql = 'ALTER TABLE ' . $this->quote($this->tabname($state->table()->name())) . ' DROP INDEX ';
         if ($state->type() == IndexPrimary::class) {
-            $sql .= $this->pdoConnection->quote('PRIMARY KEY');
+            $sql .= $this->quote('PRIMARY KEY');
         } else {
-            $sql .= $this->pdoConnection->quote($state->name());
+            $sql .= $this->quote($state->name());
         }
         return [$sql];
-    }
-    // Изменение индекса
-    protected function onIndexChange(StateIndex $stateFrom, StateIndex $stateTo, DbSchemaCommandsChanges $changeCommands): array
-    {
-        return array_merge(
-            $this->onIndexDrop($stateFrom),
-            $this->onIndexCreate($stateTo)
-        );
     }
 };

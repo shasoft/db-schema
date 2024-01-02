@@ -2,33 +2,35 @@
 
 namespace Shasoft\DbSchema\Tests\Unit;
 
-use Shasoft\Pdo\PdoConnection;
+use Shasoft\DbTool\DbToolPdo;
 use PHPUnit\Framework\TestCase;
 use Shasoft\DbSchema\Command\Type;
 use Shasoft\DbSchema\DbSchemaDriver;
-use Shasoft\DbSchema\Command\TabName;
-use Shasoft\DbSchema\Tests\Table\User;
+use Shasoft\DbSchemaDev\Table\User;
 use Shasoft\DbSchema\Column\ColumnReal;
 use Shasoft\DbSchema\DbSchemaMigrations;
-use Shasoft\DbSchema\Tests\Table\Article;
-use Shasoft\DbSchema\Tests\Table\AllTypes;
-use Shasoft\DbSchema\Tests\Table\ForSeeder;
-use Shasoft\DbSchema\Tests\Table\AllMigrations;
-use Shasoft\DbSchema\Tests\Table\AllIndexes;
-use Shasoft\DbSchema\Tests\Table\TabExample;
-use Shasoft\DbSchema\Tests\Table\TabReference1;
-use Shasoft\DbSchema\Tests\Table\TabReference2;
+use Shasoft\DbSchemaDev\DbSchemaDevTool;
+use Shasoft\DbSchemaDev\Table\Article;
+use Shasoft\DbSchemaDev\Table\AllTypes;
+use Shasoft\DbSchemaDev\Table\ForSeeder;
+use Shasoft\DbSchemaDev\Table\AllIndexes;
+use Shasoft\DbSchemaDev\Table\TabExample;
+use Shasoft\DbSchemaDev\Table\AllMigrations;
+use Shasoft\DbSchemaDev\Table\TabReference1;
+use Shasoft\DbSchemaDev\Table\TabReference2;
 
 abstract class Base extends TestCase
 {
     // Имя драйвера
     protected string $driverName;
     // Параметры PDO
-    protected array $pdoParams;
+    protected string $pdoDsn;
+    protected ?string $username = null;
+    protected ?string $password = null;
+    // PDO
+    protected ?\PDO $pdo;
     // Драйвер
     protected ?DbSchemaDriver $driver;
-    // Соединение БД
-    protected ?PdoConnection $connection;
     //
     public function setUp(): void
     {
@@ -36,9 +38,8 @@ abstract class Base extends TestCase
         // Драйвер
         $classname = $this->driverName;
         $this->driver = new $classname;
-        // Создать соединение
-        $classname = $this->driver->pdoConnectionClass();
-        $this->connection = new $classname($this->pdoParams);
+        // Создать PDO соединение
+        $this->pdo = new \PDO($this->pdoDsn, $this->username, $this->password);
     }
     public function tearDown(): void
     {
@@ -46,22 +47,22 @@ abstract class Base extends TestCase
         // Уничтожить драйвер
         $this->driver = null;
         // Уничтожить соединение
-        $this->connection = null;
+        $this->pdo = null;
     }
     protected function migrationTables(array $tablesClass)
     {
         // Очистить БД
-        $this->connection->reset();
+        DbToolPdo::reset($this->pdo);
         // Сгенерировать миграции
         $migrations = DbSchemaMigrations::get($tablesClass, $this->driverName);
         // Выполнить миграции
-        $migrations->run($this->connection);
+        $migrations->run($this->pdo);
         // Проверить что в БД все таблицы создались + 1 техническая таблица
-        self::assertCount(count($tablesClass) + 1, $this->connection->tables());
+        self::assertCount(count($tablesClass) + 1, DbToolPdo::tables($this->pdo));
         // Отмена миграций
-        while ($migrations->cancel($this->connection) != 0);
+        while ($migrations->cancel($this->pdo) != 0);
         // Проверить что в БД осталась только техническая таблица
-        self::assertCount(1, $this->connection->tables());
+        self::assertCount(1, DbToolPdo::tables($this->pdo));
     }
     public function testMigrationAllTypes()
     {
@@ -104,11 +105,11 @@ abstract class Base extends TestCase
     public function testSeeder()
     {
         // Очистить БД
-        $this->connection->reset();
+        DbToolPdo::reset($this->pdo);
         // Сгенерировать миграции
         $migrations = DbSchemaMigrations::get([ForSeeder::class], $this->driverName);
         // Выполнить миграции
-        $migrations->run($this->connection);
+        $migrations->run($this->pdo);
         // Получить таблицу
         $table = $migrations->database()->table(ForSeeder::class);
         // Сгенерировать данные
@@ -125,10 +126,11 @@ abstract class Base extends TestCase
             $values[$row['id8']] = $row;
         }
         // Вставить данные
-        $cntInsert = $table->insert($this->connection, $rows);
+        $cntInsert = DbSchemaDevTool::insert($this->pdo, $table, $rows);
         self::assertCount($cntInsert, $rows, 'Не все строки добавились');
         // Выбрать данные
-        $rowsSelect = $this->connection->sql('SELECT * FROM ' . $this->connection->quote($table->value(TabName::class)))->exec()->fetch();
+        $sql = 'SELECT * FROM ' . DbToolPdo::quote($this->pdo, $table->tabname());
+        $rowsSelect = DbToolPdo::query($this->pdo, $sql);
         // Преобразовать в формат PHP и сравнить
         foreach ($rowsSelect as $rowSelect) {
             $row = $values[$rowSelect['id8']];

@@ -21,19 +21,12 @@ use Shasoft\DbSchema\Index\IndexPrimary;
 use Shasoft\DbSchema\Command\Columns;
 use Shasoft\DbSchema\Command\DefaultValue;
 use Shasoft\DbSchema\DbSchemaCommandsChanges;
-use Shasoft\Pdo\Connection\PdoConnectionPostgreSql;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionNotImplemented;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionSqlDataTypeNotSupported;
 
 // Драйвер миграций PostgreSql
 class DbSchemaDriverPostgreSql extends DbSchemaDriver
 {
-    // Конструктор
-    public function __construct()
-    {
-        // Вызвать конструктор родителя
-        parent::__construct(PdoConnectionPostgreSql::class);
-    }
     // Получить тип для колонки
     // https://metanit.com/sql/postgresql/2.3.php
     // https://www.postgresql.org/docs/current/datatype-numeric.html
@@ -135,6 +128,16 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
         return $ret;
     }
     /////// Методы ////////////
+    // Поддерживаемые PDO драйверы
+    public function pdoSupport(): array
+    {
+        return ['pgsql'];
+    }
+    // Заключить имя таблицы/колонки в кавычки
+    public function quote(string $name): string
+    {
+        return '"' . $name . '"';
+    }
     /////// Таблица ////////////
     // Создание таблицы
     protected function onTableCreate(StateTable $state): array
@@ -144,14 +147,14 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
         //-- Установить таблицу
         $lines = [];
         foreach ($state->columns() as $key => $column) {
-            $lines[] = $this->pdoConnection->quote($column->name()) . ' ' . $this->sqlForColumn($column);
+            $lines[] = $this->quote($column->name()) . ' ' . $this->sqlForColumn($column);
             // Добавить атрибут комментария
             $column->valueHas($ret, Comment::class, function (array &$ret, string $value) use ($column) {
                 $ret[] =
                     "COMMENT ON COLUMN " .
-                    $this->pdoConnection->quote($this->tabname($column->table()->name())) .
+                    $this->quote($this->tabname($column->table()->name())) .
                     "." .
-                    $this->pdoConnection->quote($column->name()) .
+                    $this->quote($column->name()) .
                     " IS '" . addslashes($value) . "'";
             });
         }
@@ -160,24 +163,17 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
             $ret = array_merge($ret, $this->onIndexCreate($index));
         }
         // Команда создания таблицы
-        $sqlCreateTable = "CREATE TABLE " . $this->pdoConnection->quote($this->tabname($state->name())) . " (" . implode(", ", $lines) . ")";
+        $sqlCreateTable = "CREATE TABLE " . $this->quote($this->tabname($state->name())) . " (" . implode(", ", $lines) . ")";
         // Комментарий
         $state->valueHas($ret, Comment::class, function (array &$ret, string $value) use ($state) {
             $ret[] = "COMMENT ON TABLE " .
-                $this->pdoConnection->quote($this->tabname($state->name())) .
+                $this->quote($this->tabname($state->name())) .
                 " IS '" .
                 addslashes($value) .
                 "'";
         });
         //
         return array_merge([$sqlCreateTable], $ret);
-    }
-    // Удаление таблицы
-    protected function onTableDrop(StateTable $state): array
-    {
-        return [
-            $this->pdoConnection->sqlDropTable($this->tabname($state->name()))
-        ];
     }
     // Изменение таблицы
     protected function onTableChange(StateTable $stateFrom, StateTable $stateTo, DbSchemaCommandsChanges $changeCommands): array
@@ -187,7 +183,7 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
             if ($changeCommands->has(Comment::class)) {
                 return [
                     "COMMENT ON TABLE " .
-                        $this->pdoConnection->quote($this->tabname($stateTo->name())) .
+                        $this->quote($this->tabname($stateTo->name())) .
                         " IS '" .
                         addslashes($stateTo->comment()) .
                         "'"
@@ -204,9 +200,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
     {
         return [
             'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($state->table()->name())) .
+                $this->quote($this->tabname($state->table()->name())) .
                 ' ADD ' .
-                $this->pdoConnection->quote($state->name()) .
+                $this->quote($state->name()) .
                 ' ' .
                 $this->sqlForColumn($state)
         ];
@@ -216,9 +212,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
     {
         return [
             'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($state->table()->name())) .
+                $this->quote($this->tabname($state->table()->name())) .
                 ' DROP COLUMN ' .
-                $this->pdoConnection->quote($state->name()) . ';'
+                $this->quote($state->name()) . ';'
         ];
     }
     // Изменение колонки
@@ -232,11 +228,11 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
             // ALTER TABLE table_name RENAME COLUMN old_column_name TO new_column_name;
             $ret[] =
                 'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($stateTo->table()->name())) .
+                $this->quote($this->tabname($stateTo->table()->name())) .
                 ' RENAME COLUMN ' .
-                $this->pdoConnection->quote($stateFrom->name()) .
+                $this->quote($stateFrom->name()) .
                 ' TO ' .
-                $this->pdoConnection->quote($stateTo->name()) .
+                $this->quote($stateTo->name()) .
                 ';';
         }
         // Если тип изменился
@@ -244,9 +240,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
         if ($sqlType != $this->getType($stateFrom)) {
             $ret[] =
                 'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($stateTo->table()->name())) .
+                $this->quote($this->tabname($stateTo->table()->name())) .
                 ' ALTER COLUMN ' .
-                $this->pdoConnection->quote($stateTo->name()) .
+                $this->quote($stateTo->name()) .
                 ' TYPE ' .
                 $sqlType .
                 ';';
@@ -257,9 +253,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
             //
             $sqlPrefix =
                 'ALTER TABLE ' .
-                $this->pdoConnection->quote($this->tabname($stateTo->table()->name())) .
+                $this->quote($this->tabname($stateTo->table()->name())) .
                 ' ALTER COLUMN ' .
-                $this->pdoConnection->quote($stateTo->name());
+                $this->quote($stateTo->name());
             //
             if (is_null($defaultValue)) {
                 $ret[] = $sqlPrefix . ' DROP NOT NULL';
@@ -275,9 +271,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
             $stateTo->valueHas($ret, Comment::class, function (array &$ret, string $value) use ($stateTo) {
                 $ret[] =
                     "COMMENT ON COLUMN " .
-                    $this->pdoConnection->quote($this->tabname($stateTo->table()->name())) .
+                    $this->quote($this->tabname($stateTo->table()->name())) .
                     "." .
-                    $this->pdoConnection->quote($stateTo->name()) .
+                    $this->quote($stateTo->name()) .
                     " IS '" . addslashes($value) . "'";
             });
         }
@@ -302,9 +298,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
         return [
             'CREATE ' .
                 self::$typesMap[$state->type()] . ' ' .
-                $this->pdoConnection->quote($this->indexName($state)) . ' ON ' .
-                $this->pdoConnection->quote($this->tabname($state->table()->name())) .
-                ' (' . implode(',', $state->get(Columns::class)->fields($this->pdoConnection)) . ')'
+                $this->quote($this->indexName($state)) . ' ON ' .
+                $this->quote($this->tabname($state->table()->name())) .
+                ' (' . implode(',', $state->get(Columns::class)->fields($this)) . ')'
         ];
     }
     // Удаление индекса
@@ -312,15 +308,7 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
     {
         // DROP INDEX `PRIMARY` ON t;
         // ALTER TABLE `shasoft-migration-tests-table-article` DROP INDEX `author`;
-        $sql = 'DROP INDEX ' . $this->pdoConnection->quote($this->indexName($state));
+        $sql = 'DROP INDEX ' . $this->quote($this->indexName($state));
         return [$sql];
-    }
-    // Изменение индекса
-    protected function onIndexChange(StateIndex $stateFrom, StateIndex $stateTo, DbSchemaCommandsChanges $changeCommands): array
-    {
-        return array_merge(
-            $this->onIndexDrop($stateFrom),
-            $this->onIndexCreate($stateTo)
-        );
     }
 };

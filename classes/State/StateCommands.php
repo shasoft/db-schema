@@ -2,7 +2,7 @@
 
 namespace Shasoft\DbSchema\State;
 
-use Shasoft\Reflection\Reflection;
+use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\Command\ICommand;
 
 // Состояние с командами
@@ -16,7 +16,7 @@ class StateCommands
         $this->commands = $commands;
         // Установить родительский контейнер команд для каждой команды
         foreach ($commands as $command) {
-            Reflection::getObjectProperty($command, 'parent')->setValue($command, $this);
+            DbSchemaReflection::getObjectProperty($command, 'parent')->setValue($command, $this);
         }
     }
     // Получить команду

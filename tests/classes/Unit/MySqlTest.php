@@ -9,9 +9,6 @@ class MySqlTest extends Base
     // Имя драйвера
     protected string $driverName = DbSchemaDriverMySql::class;
     // Параметры PDO
-    protected array $pdoParams = [
-        'dbname' => 'cmg-db-test',
-        'host' => 'localhost',
-        'username' => 'root'
-    ];
+    protected string $pdoDsn = 'mysql:dbname=cmg-db-test;host=localhost';
+    protected ?string $username = 'root';
 }

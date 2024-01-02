@@ -1,6 +1,6 @@
 ## Версионная миграция структуры базы данных через PHP атрибуты
 
-Всегда немного раздражало что при написании миграций в Laravel сначала необходимо прописывать поля в классе модели, а затем эти же поля в миграциях. И когда мне понадобилось написать версионирование структуры БД, то решил совместить класс модели и миграции.  И сделал я это через [атрибуты PHP](https://www.php.net/manual/ru/language.attributes.overview.php). Также вместе с миграциями я получил состояние базы данных которое можно использовать при работе с ней.
+Всегда немного раздражало что при написании миграций в Laravel сначала необходимо прописывать поля в классе модели, а затем эти же поля в миграциях. И когда мне понадобилось написать версионирование структуры БД, то решил совместить класс модели и миграции.  И сделал я это через [атрибуты PHP](https://www.php.net/manual/ru/language.attributes.overview.php). Также вместе с миграциями я получил состояние базы данных с мета-информацией которую можно использовать при работе с ней.
 
 ### Введение
 
@@ -15,29 +15,30 @@ class TabExample
     protected ColumnString $name;
     // Первичный ключ
     #[Columns('id')]
-    protected IndexPrimary $pkKey;
+    protected IndexPrimary $pkKey; 
 }
 ```
 В данном примере через класс TabExample определяется таблица, содержащая два поля и один индекс. Миграции для указанного примера создаются следующим образом:
 ```php
-    // Создать PDO соединение
-    $pdoConnection = new PdoConnectionMySql([
-        'dbname' => 'cmg-db-test',
-        'host' => 'localhost',
-        'username' => 'root'
-    ]);
     // Получить миграции
     $migrations = DbSchemaMigrations::get([
-            TabExample::class,      // Класс таблицы
+            // Класс таблицы
+            TabExample::class,      
         ],
-        DbSchemaDriverMySql::class   // Драйвер для получения миграций
+        // Драйвер для получения миграций
+        DbSchemaDriverMySql::class   
+    );
+    // Создать PDO соединение
+    $pdo = new \PDO(
+        'mysql:dbname=cmg-db-test;host=localhost', 
+        'root'
     );
     // Выполнить миграции
-    $migrations->run($pdoConnection);
+    $migrations->run($pdo);
 ```
 В результате выполнения миграций в БД создастся таблица БД с помощью следующего SQL кода
 ```sql
-CREATE TABLE `shasoft-dbschema-tests-table-tabexample`(
+CREATE TABLE `tabexample`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор',
     `name` VARCHAR(255) NULL COMMENT 'Имя',
     PRIMARY KEY(`id`) USING BTREE
@@ -46,12 +47,12 @@ CREATE TABLE `shasoft-dbschema-tests-table-tabexample`(
 Можно отменить последнии миграции с помощью следующего кода
 ```php
 // Отменить последнии миграции
-$migrations->cancel($pdoConnection);
+$migrations->cancel($pdo);
 ```
 эти миграции будут отменены с помощью следующего SQL кода
 ```sql
 DROP TABLE IF EXISTS
-    `shasoft-dbschema-tests-table-tabexample`
+    `tabexample`
 ```
 
 Основная идея очень простая: создается класс таблицы, в котором определяются колонки(поля), [индексы](https://habr.com/ru/companies/ruvds/articles/724066/), [отношения](https://habr.com/ru/articles/193380/) и ссылки на поля.
@@ -76,7 +77,7 @@ class TabExample
 Т.е. указываем команду `Migration` в качестве параметров строку с датой/временем миграции (можно указывать не строку, а объект DateTime) и после указываем команды изменений которые вносит эта миграция. В данном случае мы добавили новое поле **fam**. В результате миграции будут содержать две SQL команды. Первая команда - создание таблицы (как в первом примере) и вторая команда - добавление нового поля:
 ```sql
 ALTER TABLE
-    `shasoft-dbschema-tests-table-tabexample` ADD `fam` VARCHAR(255) NULL COMMENT 'Фамилия'
+    `tabexample` ADD `fam` VARCHAR(255) NULL COMMENT 'Фамилия'
 ```
 Добавим ещё одну миграцию с переименованием поля и удалением поля
 ```php
@@ -102,14 +103,14 @@ class TabExample
 И тогда в миграции добавится ещё две SQL команды для удаления
 ```sql
 ALTER TABLE
-    `shasoft-dbschema-tests-table-tabexample`
+    `tabexample`
 DROP COLUMN
     `name`;
 ```
 и переименования поля
 ```sql
 ALTER TABLE
-    `shasoft-dbschema-tests-table-tabexample` CHANGE `fam` `surname` VARCHAR(255) NULL COMMENT 'Фамилия';
+    `tabexample` CHANGE `fam` `surname` VARCHAR(255) NULL COMMENT 'Фамилия';
 ```
 
 ### Типы колонок (полей)
@@ -141,7 +142,7 @@ class TabExample
 ```
 SQL код для [MySql](https://metanit.com/sql/mysql/2.3.php)
 ```sql
-CREATE TABLE `shasoft-dbschema-tests-table-tabexample`(
+CREATE TABLE `tabexample`(
     `rost` SMALLINT NULL COMMENT 'Рост человека, мм'
 ) COMMENT 'Таблица для примера';
 ```
@@ -159,7 +160,7 @@ class TabExample
 ```
 и получаем код где по умолчанию рост устанавливается = 1800
 ```sql
-CREATE TABLE `shasoft-dbschema-tests-table-tabexample`(
+CREATE TABLE `tabexample`(
     `rost` SMALLINT DEFAULT 1800 COMMENT 'Рост человека, мм'
 ) COMMENT 'Таблица для примера';
 ```
@@ -241,7 +242,7 @@ class ColumnJson extends ColumnString
 $rows = $migrations
     ->database()
     ->table(TabExample::class)
-    ->insert($pdoConnection, $rows);
+    ->insert($pdo, $rows);
 ```
 В качестве параметра метод получает объект PDO соединения с БД и строки таблицы.
 

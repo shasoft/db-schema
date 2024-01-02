@@ -56,29 +56,33 @@ class ColumnString extends Column
     // Получить случайное значение
     public static function random(int $maxLength, int $minLength, int $spaces): string
     {
+        $ret = '';
         //
         if ($maxLength == 0) $maxLength = $minLength;
         // Длинна строки
-        $length = lcg_value() * (abs($maxLength - $minLength));
-        //s_dump($min, $max, $spaces, $length);
-        $ret = '';
-        while ($spaces > 0) {
-            $size = intval($length / ($spaces + 1));
-            $len = ColumnInteger::value(min(2, $size), max(10, $size));
-            if ($len > 0) {
-                $ret .= self::randomString($len);
-                $length -= $len;
-                $ret .= ' ';
-                $length--;
+        $length = ColumnInteger::random($minLength, $maxLength);
+        if ($length > 0) {
+            $ret = '';
+            while ($spaces > 0) {
+                $size = intval($length / ($spaces + 1));
+                $minV = min(2, $size);
+                $maxV = max(10, $size);
+                $len = ColumnInteger::random($minV, $maxV);
+                if ($len > 0) {
+                    $ret .= self::randomString($len);
+                    $length -= $len;
+                    $ret .= ' ';
+                    $length--;
+                }
+                $spaces--;
             }
-            $spaces--;
         }
         $ret = trim($ret);
         // Определим остаток
         $len = strlen($ret);
-        $length = intval($maxLength - $len);
-        if ($length > 0) {
-            $ret .= self::randomString($length);
+        $length = ColumnInteger::random($minLength, $maxLength);
+        if ($len < $length) {
+            $ret .= self::randomString($length - $len);
         }
         //
         return $ret;

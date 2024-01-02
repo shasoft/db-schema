@@ -3,11 +3,10 @@
 namespace Shasoft\DbSchema;
 
 use Shasoft\Pdo\SqlFormat;
-use Shasoft\Pdo\PdoConnection;
-use Shasoft\Reflection\Reflection;
 use Shasoft\DbSchema\Command\TabName;
 use Shasoft\DbSchema\State\StateDatabase;
 use Shasoft\DbSchema\DbSchemaStateManager;
+use Shasoft\DbSchema\DbSchemaReflection;
 
 // Миграции
 class DbSchemaMigrations
@@ -25,13 +24,12 @@ class DbSchemaMigrations
         $this->stateDatabase = $migrations[array_key_last($migrations)]['state'];
         // Создать объект драйвера
         $driver = new $classDriver;
-        // Установить тип соединения
-        $typeConnection = Reflection::getObjectPropertyValue($driver, 'pdoConnection', null)->type();
-        Reflection::getObjectProperty($this->stateDatabase, 'typeConnection')->setValue($this->stateDatabase, $typeConnection);
+        // Установить поддерживаемые PDO соединения
+        DbSchemaReflection::getObjectProperty($this->stateDatabase, 'pdoSupport')->setValue($this->stateDatabase, $driver->pdoSupport());
         // Добавить команды имен таблиц
         foreach ($this->stateDatabase->tables() as $classname => $table) {
             // Получить свойство команды
-            $propertyCommands = Reflection::getObjectProperty($table, 'commands');
+            $propertyCommands = DbSchemaReflection::getObjectProperty($table, 'commands');
             // Читать значение свойства
             $commands = $propertyCommands->getValue($table);
             // Добавить новую команду
@@ -46,6 +44,11 @@ class DbSchemaMigrations
             //unset($migration['state']);
             return $migration;
         }, $migrations);
+    }
+    // Имя технической таблицы с миграциями
+    static public function getTechTable(): string
+    {
+        return self::$techTable;
     }
     public function __serialize(): array
     {
@@ -85,7 +88,7 @@ class DbSchemaMigrations
         $tabNames = array_unique($tabNames);
         $stateDatabases[] = null;
         $stateDatabases = array_reverse($stateDatabases);
-        $refMethodDiffInt = Reflection::getObjectMethod($driver, 'diffInt');
+        $refMethodDiffInt = DbSchemaReflection::getObjectMethod($driver, 'diffInt');
         foreach ($tabNames as $tabname) {
             for ($i = 1; $i < count($stateDatabases); $i++) {
                 $up = $refMethodDiffInt->invoke($driver, $stateDatabases[$i - 1], $stateDatabases[$i], $tabname);
@@ -99,10 +102,10 @@ class DbSchemaMigrations
                         $state = unserialize(serialize($stateDatabases[$i]));
                         //s_dd($state, $stateDatabases[$i]);
                         // Обнулить родительскую БД
-                        Reflection::getObjectProperty($state, 'parent')->setValue($state, null);
+                        DbSchemaReflection::getObjectProperty($state, 'parent')->setValue($state, null);
                         // Удалить из таблиц все удаленные объекты
                         foreach ($state->tables() as $table) {
-                            Reflection::getObjectProperty($table, 'drops')->setValue($table, []);
+                            DbSchemaReflection::getObjectProperty($table, 'drops')->setValue($table, []);
                         }
                         //
                         $migrations[$name] = [
@@ -149,34 +152,43 @@ class DbSchemaMigrations
         return $this->stateDatabase;
     }
     // Выполнить миграции
-    public function run(PdoConnection $connection): void
+    public function run(\PDO $pdo): void
     {
         // Создать драйвер миграции
         $classname = $this->classDriver;
         $driver = new $classname();
         // Получить состояние для технической таблицы
         $stateDatabase = DbSchemaStateManager::get([DbSchemaTechTable::class]);
-        // Получить список таблиц
-        $tables = array_flip($connection->tables());
-        // Если отсутствует техническая таблица
-        if (!array_key_exists(self::$techTable, $tables)) {
-            // то создать это техническую таблицу
-            // Выполнить все миграции создания технической таблицы
-            foreach ($stateDatabase->migrations($driver) as $migrationItem) {
-                foreach ($migrationItem['migrations'] as $tabname => $item) {
-                    foreach ($item['up'] as $sql) {
-                        // Заменить имя таблицы на имя технической таблицы миграций
-                        $sql = str_replace($driver->tabname(DbSchemaTechTable::class), self::$techTable, $sql);
-                        // Выполнить SQL
-                        $connection->sql($sql)->exec();
+        // Проверим наличие таблицы БД
+        // Для этого просто выберем из неё данные
+        try {
+            $sql = 'SELECT * FROM ' . $driver->quote(self::getTechTable());
+            $pdo->query($sql);
+        } catch (\PDOException $e) {
+            // Если это ошибка отсутствия таблицы
+            if ($e->getCode() == '42S02' || $e->getCode() == '42P01') {
+                // Создать техническую таблицу
+                // Выполнить все миграции создания технической таблицы
+                $techMigrations = $stateDatabase->migrations($driver);
+                foreach ($techMigrations as $migrationItem) {
+                    foreach ($migrationItem['migrations'] as $tabname => $item) {
+                        foreach ($item['up'] as $sql) {
+                            // Заменить имя таблицы на имя технической таблицы миграций
+                            $sql = str_replace($driver->tabname(DbSchemaTechTable::class), self::$techTable, $sql);
+                            // Выполнить SQL
+                            $pdo->query($sql);
+                        }
                     }
                 }
+            } else {
+                // Иначе прокинем дальше исключение
+                throw $e;
             }
         }
         // Определить номер
         $okDbSchemaMigrations = [];
         $num = 1;
-        $rows = $connection->sql('SELECT * FROM ' . $connection->quote(self::$techTable))->exec()->fetch();
+        $rows = $pdo->query('SELECT * FROM ' . $driver->quote(self::$techTable))->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
             $okDbSchemaMigrations[$row['name'] . "\n" . $row['classname']] = 1;
             //
@@ -186,6 +198,19 @@ class DbSchemaMigrations
             }
         }
         // Выполнить все миграции которые не выполнялись
+        // INSERT INTO <имя таблицы>[(<имя столбца>,...)] {VALUES (<значение столбца>,…)}
+        $queryInsert = $pdo->prepare(
+            'INSERT INTO ' .
+                $driver->quote(self::$techTable) .
+                ' (' .
+                $driver->quote('num') . ',' .
+                $driver->quote('sub') . ',' .
+                $driver->quote('name') . ',' .
+                $driver->quote('classname') . ',' .
+                $driver->quote('up') . ',' .
+                $driver->quote('down') .
+                ') VALUES (:num, :sub, :name, :classname, :up, :down)'
+        );
         $sub = 0;
         foreach ($this->migrations as $migrationItem) {
             foreach ($migrationItem['migrations'] as $classname => $item) {
@@ -196,32 +221,33 @@ class DbSchemaMigrations
                     // то выполнить её
                     foreach ($item['up'] as $sql) {
                         // Выполнить SQL
-                        $connection->sql($sql)->exec();
+                        $pdo->query($sql);
                     }
-                    // и сохранить выполненную миграцию 
-                    // INSERT INTO <имя таблицы>[(<имя столбца>,...)] {VALUES (<значение столбца>,…)}
-                    $connection->insert(self::$techTable, [
-                        'num' => $num,
-                        'sub' => ($sub++),
-                        'name' => $migrationItem['name'],
-                        'classname' => $classname,
-                        'up' => json_encode($item['up']),
-                        'down' => json_encode($item['down'])
-                    ]);
+                    $sub++;
+                    //-- Сохранить выполненную миграцию 
+                    // Привязать значения
+                    $queryInsert->bindValue('num', $num, \PDO::PARAM_INT);
+                    $queryInsert->bindValue('sub', $sub, \PDO::PARAM_INT);
+                    $queryInsert->bindValue('name', $migrationItem['name'], \PDO::PARAM_STR);
+                    $queryInsert->bindValue('classname', $classname, \PDO::PARAM_STR);
+                    $queryInsert->bindValue('up', json_encode($item['up']), \PDO::PARAM_STR);
+                    $queryInsert->bindValue('down', json_encode($item['down']), \PDO::PARAM_STR);
+                    // Выполнить
+                    $queryInsert->execute();
                 }
             }
         }
     }
     // Отменить последнюю миграцию
-    public function cancel(PdoConnection $connection): int
+    public function cancel(\PDO $pdo): int
     {
         $ret = 0;
-        // Получить список таблиц
-        $tables = array_flip($connection->tables());
-        // Если техническая таблица присутствует в БД
-        if (array_key_exists(self::$techTable, $tables)) {
-            // Определить номер
-            $rows = $connection->sql('SELECT * FROM ' . $connection->quote(self::$techTable))->exec()->fetch();
+        // Создать драйвер миграции
+        $classname = $this->classDriver;
+        $driver = new $classname();
+        // Читать данные из технической таблицы
+        try {
+            $rows = $pdo->query('SELECT * FROM ' . $driver->quote(self::$techTable))->fetchAll(\PDO::FETCH_ASSOC);
             if (!empty($rows)) {
                 $num = $rows[0]['num'];
                 foreach ($rows as $row) {
@@ -240,28 +266,33 @@ class DbSchemaMigrations
                 usort($rows, function (array $row1, array $row2) {
                     return $row1['sub'] < $row2['sub'] ? 1 : ($row1['sub'] > $row2['sub'] ? -1 : 0);
                 });
+                // INSERT INTO <имя таблицы>[(<имя столбца>,...)] {VALUES (<значение столбца>,…)}
+                $sql =
+                    'DELETE FROM ' .
+                    $driver->quote(self::$techTable) .
+                    ' WHERE ' .
+                    $driver->quote('num') . ' = :num' .
+                    ' AND ' .
+                    $driver->quote('sub') . ' = :sub';
+                $queryDelete = $pdo->prepare($sql);
                 // Выполнить все миграции отмены
                 foreach ($rows as $row) {
                     $down = json_decode($row['down'], true);
                     foreach ($down as $sql) {
-                        $connection->sql($sql)->exec();
+                        $pdo->query($sql);
                     }
+                    // Привязать значения
+                    $queryDelete->bindValue('num', $row['num'], \PDO::PARAM_INT);
+                    $queryDelete->bindValue('sub', $row['sub'], \PDO::PARAM_INT);
                     // Удалить миграцию из таблицы
-                    $sql = 'DELETE FROM ' .
-                        $connection->quote(self::$techTable) .
-                        ' WHERE ' .
-                        $connection->quote('num') . ' = :num' .
-                        ' AND ' .
-                        $connection->quote('sub') . ' = :sub';
-                    $connection->sql($sql)->exec([
-                        'num' => $row['num'],
-                        'sub' => $row['sub']
-                    ]);
+                    $queryDelete->execute();
                 }
             }
+        } catch (\Exception $e) {
         }
         return $ret;
     }
+    /*
     // Вывод для отладки
     public function dump(): void
     {
@@ -282,4 +313,5 @@ class DbSchemaMigrations
         }
         echo '</div>';
     }
+    //*/
 };

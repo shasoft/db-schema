@@ -2,13 +2,11 @@
 
 namespace Shasoft\DbSchema\State;
 
-use Shasoft\Pdo\PdoConnection;
 use Shasoft\DbSchema\Command\Id;
 use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\DbSchemaState;
 use Shasoft\DbSchema\Command\Comment;
 use Shasoft\DbSchema\Command\TabName;
-use Shasoft\DbSchema\Command\PdoParam;
 use Shasoft\DbSchema\Command\Classname;
 use Shasoft\DbSchema\State\StateColumn;
 use Shasoft\DbSchema\State\StateCommands;
@@ -60,10 +58,15 @@ class StateTable extends StateCommands
     {
         return $this->stateDatabase;
     }
-    // Имя таблицы
+    // Имя класса таблицы
     public function name(): string
     {
         return $this->value(Classname::class);
+    }
+    // Имя таблицы
+    public function tabname(): string
+    {
+        return $this->value(TabName::class);
     }
     // Комментарий
     public function comment(): string
@@ -139,34 +142,5 @@ class StateTable extends StateCommands
             $ret[] = $row;
         }
         return $ret;
-    }
-    // Добавить данные в таблицу
-    public function insert(PdoConnection $connection, array $rows): int
-    {
-        if (!empty($rows)) {
-            // Если это одна строка
-            if (!array_key_exists(0, $rows)) {
-                // то преобразовать в массив строк
-                $rows = [$rows];
-            }
-            // INSERT INTO tableName (col1, col2, ...colN) VALUES (val1, val2, ...valN)
-            $rowsValues = [];
-            foreach ($rows as $row) {
-                //
-                $values = [];
-                foreach ($row as $name => $value) {
-                    $values[$name] = $this->column($name)->input($value);
-                }
-                $rowsValues[] = $values;
-            }
-            // Типы
-            $types = [];
-            foreach ($rows[0] as $name => $value) {
-                $types[$name] = $this->column($name)->value(PdoParam::class, \PDO::PARAM_STR);
-            }
-            // Добавить данные в таблицу
-            return $connection->insert($this->value(TabName::class), $rowsValues, $types);
-        }
-        return 0;
     }
 };
