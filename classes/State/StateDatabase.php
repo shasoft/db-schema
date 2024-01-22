@@ -37,6 +37,8 @@ class StateDatabase extends StateCommands
     // Конструктор
     public function __construct(protected string $migrationName, protected ?StateDatabase $parent, array $tables)
     {
+        // Вызвать конструктор родителя
+        parent::__construct([]);
         // Список отношений
         $relations = [];
         foreach ($tables as $table) {
@@ -232,16 +234,5 @@ class StateDatabase extends StateCommands
         });
         //
         return $ret;
-    }
-    // Очистки БД (удаление ДАННЫХ всех таблиц[кроме таблицы миграций])
-    public function clear(\PDO $pdo): void
-    {
-        /*
-        foreach ($pdoConnection->tables() as $tabname) {
-            if ($tabname != DbSchemaMigrations::getTechTable()) {
-                $pdoConnection->sql($pdoConnection->sqlClearTable($tabname))->exec();
-            }
-        }
-        //*/
     }
 };

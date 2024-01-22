@@ -2,7 +2,7 @@
 
 namespace Shasoft\DbSchema\Column;
 
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\MaxValue;
 use Shasoft\DbSchema\Command\MinValue;
 use Shasoft\DbSchema\Command\DefaultValue;
@@ -18,7 +18,7 @@ class ColumnId extends ColumnInteger
         // Вызвать конструктор родителя
         parent::__construct();
         // Установить команды
-        $this->setCommand(new Comment('Идентификатор'));
+        $this->setCommand(new Title('Идентификатор'));
         $this->setCommand(new MinValue(0));
         $this->setCommand(new MaxValue(PHP_INT_MAX));
         //$this->setCommand(new DefaultValue(0), false);

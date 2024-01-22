@@ -8,9 +8,10 @@ use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\Command\Type;
 use Shasoft\DbSchema\Command\Migration;
 use Shasoft\DbSchema\Command\Create;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\ICommand;
 use Shasoft\DbSchema\Command\Classname;
+use Shasoft\DbSchema\Command\Custom;
 use Shasoft\DbSchema\State\StateCommands;
 use Shasoft\DbSchema\Command\RemoveCommand;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionCommandIsNotSupported;
@@ -201,10 +202,12 @@ class DbSchemaState extends StateCommands
             // Класс команды
             $commandClass = $attribute->getName();
             // Команда поддерживается?
-            $hasSupport = false;
-            foreach ($supportCommands as $checkCommandClass => $_) {
-                $hasSupport = is_a($commandClass, $checkCommandClass) || $commandClass == $checkCommandClass;
-                if ($hasSupport) break;
+            $hasSupport = is_subclass_of($commandClass, Custom::class);
+            if (!$hasSupport) {
+                foreach ($supportCommands as $checkCommandClass => $_) {
+                    $hasSupport = is_a($commandClass, $checkCommandClass) || $commandClass == $checkCommandClass;
+                    if ($hasSupport) break;
+                }
             }
             if (!$hasSupport) {
                 throw new DbSchemaExceptionCommandIsNotSupported($commandClass, $classname);

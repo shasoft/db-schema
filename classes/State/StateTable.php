@@ -4,8 +4,8 @@ namespace Shasoft\DbSchema\State;
 
 use Shasoft\DbSchema\Command\Id;
 use Shasoft\DbSchema\Command\Drop;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\DbSchemaState;
-use Shasoft\DbSchema\Command\Comment;
 use Shasoft\DbSchema\Command\TabName;
 use Shasoft\DbSchema\Command\Classname;
 use Shasoft\DbSchema\State\StateColumn;
@@ -13,6 +13,7 @@ use Shasoft\DbSchema\State\StateCommands;
 use Shasoft\DbSchema\State\StateDatabase;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionIndexIsMissingInTheDatabaseTable;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionColumnIsMissingInTheDatabaseTable;
+use Shasoft\DbSchema\Exceptions\DbSchemaExceptionRelationIsMissingInTheDatabaseTable;
 
 // Состояние таблицы базы данных
 class StateTable extends StateCommands
@@ -21,10 +22,12 @@ class StateTable extends StateCommands
     protected array $columns = [];
     // Индексы
     protected array $indexes = [];
+    // Отношения
+    protected array $relations = [];
     // Список удаленных объектов
     protected array $drops = [];
     // Конструктор
-    public function __construct(protected StateDatabase $stateDatabase, DbSchemaState $state, protected array $relations)
+    public function __construct(protected StateDatabase $stateDatabase, DbSchemaState $state, array $relations)
     {
         // Вызвать конструктор родителя
         parent::__construct($state->commands());
@@ -52,6 +55,10 @@ class StateTable extends StateCommands
                 $this->indexes[$index->name()] = $index;
             }
         }
+        // Отношения
+        foreach ($relations as $relation) {
+            $this->relations[$relation->from()->name()] = $relation;
+        }
     }
     // База данных
     public function database(): StateDatabase
@@ -71,7 +78,7 @@ class StateTable extends StateCommands
     // Комментарий
     public function comment(): string
     {
-        return $this->value(Comment::class);
+        return $this->value(Title::class);
     }
     // Список колонок
     public function columns(): array
@@ -114,33 +121,12 @@ class StateTable extends StateCommands
     {
         return $this->relations;
     }
-    // Сгенерировать заданное количество строк
-    public function seeder(int $count = 1, int $procNULL = 10): array
+    // Список отношений таблицы
+    public function relation(string $name): StateRelation
     {
-        $ret = [];
-        // Определим поля с автоматической генерацией
-        $autoIncrement = [];
-        foreach ($this->columns() as $name => $column) {
-            if ($column->hasAutoIncrement()) {
-                $autoIncrement[$name] = 0;
-            }
+        if (array_key_exists($name, $this->indexes)) {
+            return $this->relations[$name];
         }
-        // Сгенерировать все строки
-        while (count($ret) < $count) {
-            // Сгенерировать строку
-            $row = [];
-            foreach ($this->columns() as $name => $column) {
-                if ($column->hasAutoIncrement()) {
-                    $autoIncrement[$name]++;
-                    $row[$name] = $autoIncrement[$name];
-                } else {
-                    // Сгенерировать значение
-                    $row[$name] = $column->seeder($procNULL);
-                }
-            }
-            //
-            $ret[] = $row;
-        }
-        return $ret;
+        throw new DbSchemaExceptionRelationIsMissingInTheDatabaseTable($name, $this->name());
     }
 };

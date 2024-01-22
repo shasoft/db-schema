@@ -7,7 +7,7 @@ use Shasoft\DbSchema\Command\Type;
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Tests\EnumInt;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\MaxValue;
 use Shasoft\DbSchema\Command\MinValue;
@@ -33,7 +33,7 @@ class ColumnEnum extends Column
         // Вызвать конструктор родителя
         parent::__construct();
         // Установить команды
-        $this->setCommand(new Comment('Перечисление'));
+        $this->setCommand(new Title('Перечисление'));
         $this->setCommand(new DbSchemaType('Enum'), false);
         $this->setCommand(new DefaultValue());
         // Обязательные команды

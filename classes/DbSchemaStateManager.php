@@ -8,23 +8,24 @@ use Shasoft\DbSchema\Table\Table;
 use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\Command\Name;
 use Shasoft\DbSchema\Command\Type;
-use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\Column\Column;
-use Shasoft\DbSchema\Command\AutoIncrement;
-use Shasoft\DbSchema\Command\Migration;
 use Shasoft\DbSchema\Command\Create;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\RelName;
 use Shasoft\DbSchema\Command\ICommand;
 use Shasoft\DbSchema\Command\RelTable;
 use Shasoft\DbSchema\State\StateTable;
 use Shasoft\DbSchema\Command\Classname;
+use Shasoft\DbSchema\Command\Migration;
 use Shasoft\DbSchema\Command\RelNameTo;
 use Shasoft\DbSchema\Relation\Relation;
+use Shasoft\DbSchema\DbSchemaReflection;
+use Shasoft\DbSchema\Command\DriverClass;
 use Shasoft\DbSchema\Command\ReferenceTo;
 use Shasoft\DbSchema\Reference\Reference;
 use Shasoft\DbSchema\State\StateCommands;
 use Shasoft\DbSchema\State\StateDatabase;
+use Shasoft\DbSchema\Command\AutoIncrement;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionCommandIsNotSupported;
 use Shasoft\DbSchema\Exceptions\DbSchemaExceptionRequiredCommandNotDefined;
 
@@ -96,8 +97,8 @@ class DbSchemaStateManager
                                 // то клонировать колонку
                                 $column = clone $allColumns[$keySample];
                                 // Добавить комментарий по умолчанию из комментария исходной колонки
-                                if ($column->has(Comment::class)) {
-                                    $column->setCommand(new Comment('#' . $column->value(Comment::class)));
+                                if ($column->has(Title::class)) {
+                                    $column->setCommand(new Title('#' . $column->value(Title::class)));
                                 }
                                 // Удалить команду AutoIncrement
                                 if ($column->has(AutoIncrement::class)) {
@@ -180,7 +181,7 @@ class DbSchemaStateManager
         // Добавить имя класса таблицы
         $ret->addCommand(new Classname($tableClass));
         // По умолчанию описание таблицы - это её класс
-        $ret->addCommand(new Comment($tableClass));
+        $ret->addCommand(new Title($tableClass));
         // Команды из атрибутов
         $ret->addCommandFromAttributes($attributes, Table::class);
         // 
@@ -307,7 +308,7 @@ class DbSchemaStateManager
         // Добавить идентификатор
         $ret->addCommand(new Id($name));
         // Добавить описание (по умолчанию имя)
-        $ret->setCommand(new Comment($name));
+        $ret->setCommand(new Title($name));
         // Добавить имя отношения в текущей таблице
         $ret->setCommand(new RelName($name));
         // Добавить имя отношения в итоговой таблице

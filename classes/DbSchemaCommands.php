@@ -5,7 +5,7 @@ namespace Shasoft\DbSchema;
 use Shasoft\DbSchema\Command\Drop;
 use Shasoft\DbSchema\Command\Migration;
 use Shasoft\DbSchema\Command\Create;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\ICommand;
 use Shasoft\DbSchema\Command\RemoveCommand;
 
@@ -48,7 +48,7 @@ abstract class DbSchemaCommands
         // Поддерживаемые команды
         $this->addSupportCommand([
             Migration::class,
-            Comment::class,
+            Title::class,
             Drop::class,
             Create::class
         ]);

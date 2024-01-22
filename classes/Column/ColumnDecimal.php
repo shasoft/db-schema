@@ -4,7 +4,7 @@ namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Command\Scale;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\MaxValue;
 use Shasoft\DbSchema\Command\MinValue;
@@ -25,7 +25,7 @@ class ColumnDecimal extends Column
         parent::__construct();
         // Установить команды
         $this->setCommand(new DbSchemaType('Decimal', false));
-        $this->setCommand(new Comment('Число с фиксированной точностью'));
+        $this->setCommand(new Title('Число с фиксированной точностью'));
         $this->setCommand(new DefaultValue());
         $this->setCommand(new Precision(6));
         $this->setCommand(new Scale(4));

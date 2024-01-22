@@ -2,8 +2,8 @@
 
 namespace Shasoft\DbSchema\Command;
 
-// Комментарий
-class Comment extends Base
+// Имя класса драйвера
+class DriverClass extends Base
 {
     // Конструктор
     public function __construct(protected string $value)

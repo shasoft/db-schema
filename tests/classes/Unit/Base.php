@@ -114,9 +114,9 @@ abstract class Base extends TestCase
         $table = $migrations->database()->table(ForSeeder::class);
         // Сгенерировать данные
         $rows = array_merge(
-            $table->seeder(32, 0),
-            $table->seeder(32, 0),
-            $table->seeder(1, 100),
+            DbSchemaDevTool::seederRow($table,32, 0),
+            DbSchemaDevTool::seederRow($table,32, 0),
+            DbSchemaDevTool::seederRow($table,1, 100),
         );
         //
         $values = [];

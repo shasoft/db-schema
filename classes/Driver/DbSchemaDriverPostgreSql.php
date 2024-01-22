@@ -5,7 +5,7 @@ namespace Shasoft\DbSchema\Driver;
 use Shasoft\DbSchema\Command\Name;
 use Shasoft\DbSchema\Command\Scale;
 use Shasoft\DbSchema\Index\IndexKey;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\DbSchemaDriver;
 use Shasoft\DbSchema\Command\MaxValue;
@@ -149,7 +149,7 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
         foreach ($state->columns() as $key => $column) {
             $lines[] = $this->quote($column->name()) . ' ' . $this->sqlForColumn($column);
             // Добавить атрибут комментария
-            $column->valueHas($ret, Comment::class, function (array &$ret, string $value) use ($column) {
+            $column->valueHas($ret, Title::class, function (array &$ret, string $value) use ($column) {
                 $ret[] =
                     "COMMENT ON COLUMN " .
                     $this->quote($this->tabname($column->table()->name())) .
@@ -165,7 +165,7 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
         // Команда создания таблицы
         $sqlCreateTable = "CREATE TABLE " . $this->quote($this->tabname($state->name())) . " (" . implode(", ", $lines) . ")";
         // Комментарий
-        $state->valueHas($ret, Comment::class, function (array &$ret, string $value) use ($state) {
+        $state->valueHas($ret, Title::class, function (array &$ret, string $value) use ($state) {
             $ret[] = "COMMENT ON TABLE " .
                 $this->quote($this->tabname($state->name())) .
                 " IS '" .
@@ -180,7 +180,7 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
     {
         // COMMENT ON TABLE "contact" IS 'Изменение комментария для таблицы';
         if ($changeCommands->count() == 1) {
-            if ($changeCommands->has(Comment::class)) {
+            if ($changeCommands->has(Title::class)) {
                 return [
                     "COMMENT ON TABLE " .
                         $this->quote($this->tabname($stateTo->name())) .
@@ -266,9 +266,9 @@ class DbSchemaDriverPostgreSql extends DbSchemaDriver
             }
         }
         // Если комментарий изменился
-        if ($changeCommands->has(Comment::class)) {
+        if ($changeCommands->has(Title::class)) {
             // Добавить команду изменения комментария
-            $stateTo->valueHas($ret, Comment::class, function (array &$ret, string $value) use ($stateTo) {
+            $stateTo->valueHas($ret, Title::class, function (array &$ret, string $value) use ($stateTo) {
                 $ret[] =
                     "COMMENT ON COLUMN " .
                     $this->quote($this->tabname($stateTo->table()->name())) .

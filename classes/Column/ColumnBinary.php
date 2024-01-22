@@ -4,7 +4,7 @@ namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\PdoParam;
 use Shasoft\DbSchema\Command\Variable;
@@ -23,7 +23,7 @@ class ColumnBinary extends Column
         // Вызвать конструктор родителя
         parent::__construct();
         // Установить команды
-        $this->setCommand(new Comment('Двоичные данные'));
+        $this->setCommand(new Title('Двоичные данные'));
         $this->setCommand(new DbSchemaType('Binary'), false);
         $this->setCommand(new PdoParam(\PDO::PARAM_LOB), false);
         $this->setCommand(new DefaultValue());

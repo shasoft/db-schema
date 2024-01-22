@@ -3,10 +3,10 @@
 namespace Shasoft\DbSchema\Relation;
 
 use Shasoft\DbSchema\Command\HasOne;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\HasOneTo;
 
-#[Comment('Отношение один-к-одному')]
+#[Title('Отношение один-к-одному')]
 class RelationOneToOne extends Relation
 {
     // Конструктор

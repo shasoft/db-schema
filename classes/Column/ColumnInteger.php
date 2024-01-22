@@ -4,7 +4,7 @@ namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\MaxValue;
 use Shasoft\DbSchema\Command\MinValue;
 use Shasoft\DbSchema\Command\PdoParam;
@@ -26,7 +26,7 @@ class ColumnInteger extends Column
         // Установить команды
         $this->setCommand(new DbSchemaType('Integer'), false);
         $this->setCommand(new PdoParam(\PDO::PARAM_INT), false);
-        $this->setCommand(new Comment('Целое число'));
+        $this->setCommand(new Title('Целое число'));
         $this->setCommand(new MinValue(PHP_INT_MIN));
         $this->setCommand(new MaxValue(PHP_INT_MAX));
         $this->setCommand(new DefaultValue());

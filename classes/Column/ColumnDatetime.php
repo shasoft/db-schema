@@ -3,7 +3,7 @@
 namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Column\Column;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\State\StateCommands;
 use Shasoft\DbSchema\Command\DefaultValue;
@@ -21,7 +21,7 @@ class ColumnDatetime extends Column
         parent::__construct();
         // Установить команды
         $this->setCommand(new DbSchemaType('Datetime'), false);
-        $this->setCommand(new Comment('Дата/время'));
+        $this->setCommand(new Title('Дата/время'));
         $this->setCommand(new DefaultValue());
         $this->setCommand(new ConversionInput(self::class . '::input'), false);
         $this->setCommand(new ConversionOutput(self::class . '::output'), false);
@@ -30,18 +30,12 @@ class ColumnDatetime extends Column
     // PHP=>БД
     public static function input(?\DateTime  $value): ?string
     {
-        if (is_null($value)) {
-            return null;
-        }
         $value->setTimezone(new \DateTimeZone("UTC"));
         return $value->format('Y-m-d H:i:s');
     }
     // БД=>PHP
     public static function output(?string $value): ?\DateTime
     {
-        if (is_null($value)) {
-            return null;
-        }
         // Время в UTC 
         $ret =  \DateTime::createFromFormat('Y-m-d H:i:s', $value, new \DateTimeZone('UTC'));
         //$ret->setTimezone(new \DateTimeZone(date_default_timezone_get()));

@@ -3,7 +3,7 @@
 namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\Variable;
 use Shasoft\DbSchema\Command\MaxLength;
 use Shasoft\DbSchema\Column\ColumnString;
@@ -22,7 +22,7 @@ class ColumnJson extends ColumnString
         // Удалить команды
         $this->removeCommand(Seeder::class);
         // Установить команды
-        $this->setCommand(new Comment('Json данные'));
+        $this->setCommand(new Title('Json данные'));
         $this->setCommand(new MaxLength(256 * 256 - 1));
         $this->setCommand(new DefaultValue());
         $this->setCommand(new ConversionInput(self::class . '::inputJson'), false);
@@ -33,17 +33,11 @@ class ColumnJson extends ColumnString
     // PHP=>БД
     public static function inputJson(array|null $value): ?string
     {
-        if (is_null($value)) {
-            return null;
-        }
         return is_array($value) ? (json_encode($value, JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE)) : '{}';
     }
     // БД=>PHP
     public static function outputJson(string|null $value): ?array
     {
-        if (is_null($value)) {
-            return null;
-        }
         $ret = [];
         if (!empty($value) && is_string($value)) {
             $ret = json_decode($value, true);

@@ -4,7 +4,7 @@ namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\Variable;
 use Shasoft\DbSchema\Command\MaxLength;
@@ -24,7 +24,7 @@ class ColumnBoolean extends Column
         parent::__construct();
         // Поддерживаемые команды
         // Установить команды
-        $this->setCommand(new Comment('Логическое значение'));
+        $this->setCommand(new Title('Логическое значение'));
         $this->setCommand(new DefaultValue);
         $this->setCommand(new DbSchemaType('String'), false);
         $this->setCommand(new MinLength(1), false);
@@ -46,12 +46,12 @@ class ColumnBoolean extends Column
     // PHP=>БД
     public static function input(?bool $value): ?string
     {
-        return is_null($value) ? null : ($value ? '+' : '-');
+        return $value ? '+' : '-';
     }
     // БД=>PHP
     public static function output(?string $value): ?bool
     {
-        return is_null($value) ? null : ($value == '+' ? true : false);
+        return $value == '+' ? true : false;
     }
     // Получить случайное значение
     static public function value(): bool

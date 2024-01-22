@@ -129,9 +129,7 @@ s_dump_run(function () {
     if ($migrations->database()->hasTable(ForSeeder::class)) {
         $table = $migrations->database()->table(ForSeeder::class);
         // Сгенерировать данные
-        $rows = $table->seeder(1, 0);
-        // Вставить
-        $cntInsert = DbSchemaDevTool::insert($pdo, $table, $rows);
+        $rows = DbSchemaDevTool::seeder($pdo, $migrations->database(), 1, 0);
         // Выбрать
         $rowsSelect = DbToolPdo::query($pdo, 'SELECT * FROM ' . $driver->quote($table->value(TabName::class)));
         $rowsSelectOutput = [];
@@ -145,7 +143,6 @@ s_dump_run(function () {
         //echo PdoLog::getLog();
         s_dump(
             $rows,
-            $cntInsert,
             $rowsSelect,
             $rowsSelectOutput
         );

@@ -2,11 +2,19 @@
 
 namespace Shasoft\DbSchema;
 
-use Shasoft\Pdo\SqlFormat;
+use Shasoft\DbSchema\Command\Type;
 use Shasoft\DbSchema\Command\TabName;
-use Shasoft\DbSchema\State\StateDatabase;
-use Shasoft\DbSchema\DbSchemaStateManager;
+use Shasoft\DbSchema\State\StateIndex;
+use Shasoft\DbSchema\State\StateTable;
+use Shasoft\DbSchema\DbSchemaExtraData;
+use Shasoft\DbSchema\State\StateColumn;
 use Shasoft\DbSchema\DbSchemaReflection;
+use Shasoft\DbSchema\Index\IndexPrimary;
+use Shasoft\DbSchema\Command\DriverClass;
+use Shasoft\DbSchema\State\StateDatabase;
+use Shasoft\DbSchema\State\StateRelation;
+use Shasoft\DbSchema\DbSchemaStateManager;
+use Shasoft\DbSchema\Exceptions\DbSchemaExceptionIncorrectParameterTypeSpecifiedForSettingExtraData;
 
 // Миграции
 class DbSchemaMigrations
@@ -24,15 +32,19 @@ class DbSchemaMigrations
         $this->stateDatabase = $migrations[array_key_last($migrations)]['state'];
         // Создать объект драйвера
         $driver = new $classDriver;
-        // Установить поддерживаемые PDO соединения
-        DbSchemaReflection::getObjectProperty($this->stateDatabase, 'pdoSupport')->setValue($this->stateDatabase, $driver->pdoSupport());
+        // Добавить команду имени класса драйвера
+        $refCommands = DbSchemaReflection::getObjectProperty($this->stateDatabase, 'commands');
+        $commands = $refCommands->getValue($this->stateDatabase);
+        $commands[DriverClass::class] = new DriverClass($classDriver);
+        $refCommands->setValue($this->stateDatabase, $commands);
         // Добавить команды имен таблиц
         foreach ($this->stateDatabase->tables() as $classname => $table) {
             // Получить свойство команды
             $propertyCommands = DbSchemaReflection::getObjectProperty($table, 'commands');
             // Читать значение свойства
             $commands = $propertyCommands->getValue($table);
-            // Добавить новую команду
+            //-- Добавить новые команды
+            // Имя таблицы
             $command = new TabName($driver->tabname($classname));
             $commands[get_class($command)] = $command;
             // Установить новый список команд
@@ -150,6 +162,47 @@ class DbSchemaMigrations
     public function database(): StateDatabase
     {
         return $this->stateDatabase;
+    }
+    // Рассчитать расширенные данные
+    public function extraData(...$callbacks): static
+    {
+        // Перебрать все функции обратного вызова
+        foreach ($callbacks as $cb) {
+            $refCb = new \ReflectionFunction($cb);
+            $args = $refCb->getParameters();
+            // Тип запрашиваемого объекта
+            $type = (string)$args[0]->getType();
+            if ($type == StateDatabase::class) {
+                $cb($this->stateDatabase, new DbSchemaExtraData($this->stateDatabase));
+            } else if ($type == StateTable::class) {
+                foreach ($this->stateDatabase->tables() as $table) {
+                    $cb($table, new DbSchemaExtraData($table));
+                }
+            } else if ($type == StateColumn::class) {
+                foreach ($this->stateDatabase->tables() as $table) {
+                    foreach ($table->columns() as $column) {
+                        $cb($column, new DbSchemaExtraData($column));
+                    }
+                }
+            } else if ($type == StateIndex::class) {
+                foreach ($this->stateDatabase->tables() as $table) {
+                    foreach ($table->indexes() as $index) {
+                        $cb($index, new DbSchemaExtraData($index));
+                    }
+                }
+            } else if ($type == StateRelation::class) {
+                foreach ($this->stateDatabase->tables() as $table) {
+                    foreach ($table->relations() as $relation) {
+                        $cb($relation, new DbSchemaExtraData($relation));
+                    }
+                }
+            } else {
+                // ... потом нужно кинуть исключение
+                throw new DbSchemaExceptionIncorrectParameterTypeSpecifiedForSettingExtraData($type, $args[0]->getName());
+            }
+        }
+        // Вернуть указатель на себя
+        return $this;
     }
     // Выполнить миграции
     public function run(\PDO $pdo): void
@@ -292,26 +345,4 @@ class DbSchemaMigrations
         }
         return $ret;
     }
-    /*
-    // Вывод для отладки
-    public function dump(): void
-    {
-        echo '<div style="padding:4px;border:solid 1px green">';
-        //
-        $rows = debug_backtrace();
-        echo '<div>file: <strong style="color:green">' . $rows[0]['file'] . ':' . $rows[0]['line'] . '</strong></div>';
-        // Вывести
-        foreach ($this->migrations as $migrationItem) {
-            echo '<div style="padding:4px;border:solid 1px Teal;background-color:LightCyan">';
-            echo '<div style="padding:2px;background-color:PaleTurquoise"><strong style="color:DarkCyan">' . $migrationItem['name'] . '</strong></div>';
-            foreach ($migrationItem['migrations'] as $tabname => $migration) {
-                foreach ($migration['up'] as $sql) {
-                    echo SqlFormat::auto($sql);
-                }
-            }
-            echo '</div>';
-        }
-        echo '</div>';
-    }
-    //*/
 };

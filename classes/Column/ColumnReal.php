@@ -4,7 +4,7 @@ namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\MaxValue;
 use Shasoft\DbSchema\Command\MinValue;
@@ -24,7 +24,7 @@ class ColumnReal extends Column
         parent::__construct();
         // Установить команды
         $this->setCommand(new DbSchemaType('Real'), false);
-        $this->setCommand(new Comment('Вещественное число'));
+        $this->setCommand(new Title('Вещественное число'));
         $this->setCommand(new DefaultValue());
         $this->setCommand(new MinValue(PHP_FLOAT_MIN));
         $this->setCommand(new MaxValue(PHP_FLOAT_MAX));
@@ -36,9 +36,6 @@ class ColumnReal extends Column
     // PHP=>БД / БД=>PHP
     public static function convert(mixed $value): mixed
     {
-        if (is_null($value)) {
-            return null;
-        }
         return floatval($value);
     }
     // Получить случайное значение

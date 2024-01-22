@@ -4,7 +4,7 @@ namespace Shasoft\DbSchema\Column;
 
 use Shasoft\DbSchema\Column\Column;
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\Variable;
 use Shasoft\DbSchema\Command\MaxLength;
@@ -24,7 +24,7 @@ class ColumnString extends Column
         parent::__construct();
         // Установить команды
         $this->setCommand(new DbSchemaType('String'), false);
-        $this->setCommand(new Comment('Текст'));
+        $this->setCommand(new Title('Текст'));
         $this->setCommand(new DefaultValue());
         $this->setCommand(new Variable(true));
         $this->setCommand(new MinLength(1));
@@ -36,9 +36,6 @@ class ColumnString extends Column
     // PHP=>БД / БД=>PHP
     public static function output(mixed $value, StateCommands $column): mixed
     {
-        if (is_null($value)) {
-            return null;
-        }
         if (!$column->value(Variable::class, false)) {
             return trim($value);
         }
@@ -84,6 +81,7 @@ class ColumnString extends Column
         if ($len < $length) {
             $ret .= self::randomString($length - $len);
         }
+        //s_dd($minLength, $maxLength, $length, $len, strlen($ret));
         //
         return $ret;
     }

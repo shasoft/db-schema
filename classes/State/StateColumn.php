@@ -3,7 +3,7 @@
 namespace Shasoft\DbSchema\State;
 
 use Shasoft\DbSchema\Command\Seeder;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Column\ColumnInteger;
 use Shasoft\DbSchema\Command\DefaultValue;
@@ -17,7 +17,7 @@ class StateColumn extends StateTableChild
     // Комментарий
     public function comment(): string
     {
-        return $this->value(Comment::class);
+        return $this->value(Title::class);
     }
     // Максимальная длинна поля
     public function getDbSchemaType(): ?string
@@ -47,8 +47,10 @@ class StateColumn extends StateTableChild
     // Конвертировать во внешний формат 
     public function output(mixed $value): mixed
     {
-        if ($this->has(ConversionOutput::class)) {
-            return $this->get(ConversionOutput::class)->convert($value);
+        if (!is_null($value)) {
+            if ($this->has(ConversionOutput::class)) {
+                return $this->get(ConversionOutput::class)->convert($value);
+            }
         }
         return $value;
     }

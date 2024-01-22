@@ -11,6 +11,7 @@ use Shasoft\DbSchema\Command\PdoParam;
 use Shasoft\DbSchema\DbSchemaCommands;
 use Shasoft\DbSchema\Command\ConversionInput;
 use Shasoft\DbSchema\Command\ConversionOutput;
+use Shasoft\DbSchema\Command\Custom;
 
 // Поле таблицы
 abstract class Column extends DbSchemaCommands
@@ -24,6 +25,7 @@ abstract class Column extends DbSchemaCommands
         $this->setCommand(new PdoParam(\PDO::PARAM_STR), false);
         // Поддерживаемые команды
         $this->addSupportCommand([
+            Custom::class,
             Type::class,
             ConversionInput::class,
             ConversionOutput::class,

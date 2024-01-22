@@ -3,9 +3,9 @@
 namespace Shasoft\DbSchema\Index;
 
 use Shasoft\DbSchema\Index\Index;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 
-#[Comment('Уникальный индекс')]
+#[Title('Уникальный индекс')]
 class IndexUnique extends Index
 {
     // Индекс является уникальным?

@@ -6,12 +6,12 @@
 
 Простой пример определения таблицы БД:
 ```php
-#[Comment('Таблица для примера')]
+#[Title('Таблица для примера')]
 class TabExample
 {
-    #[Comment('Идентификатор')]
+    #[Title('Идентификатор')]
     protected ColumnId $id;
-    #[Comment('Имя')]
+    #[Title('Имя')]
     protected ColumnString $name;
     // Первичный ключ
     #[Columns('id')]
@@ -59,15 +59,15 @@ DROP TABLE IF EXISTS
 Каждая сущность (таблица, колонка, индекс, отношение, ссылка на поле) поддерживает заданный список команд, которые можно указывать через атрибуты PHP. В примере выше используются команды `Comment` и `Columns`.
 Если нам нужно добавить в класс новую миграцию, то сделать это можно с помощью команды `Migration` следующим образом:
 ```php
-#[Comment('Таблица для примера')]
+#[Title('Таблица для примера')]
 class TabExample
 {
-    #[Comment('Идентификатор')]
+    #[Title('Идентификатор')]
     protected ColumnId $id;
-    #[Comment('Имя')]
+    #[Title('Имя')]
     protected ColumnString $name;
     #[Migration('2023-12-28T22:00:00+03:00')]
-    #[Comment('Фамилия')]
+    #[Title('Фамилия')]
     protected ColumnString $fam;
     // Первичный ключ
     #[Columns('id')]
@@ -81,17 +81,17 @@ ALTER TABLE
 ```
 Добавим ещё одну миграцию с переименованием поля и удалением поля
 ```php
-#[Comment('Таблица для примера')]
+#[Title('Таблица для примера')]
 class TabExample
 {
-    #[Comment('Идентификатор')]
+    #[Title('Идентификатор')]
     protected ColumnId $id;
-    #[Comment('Имя')]
+    #[Title('Имя')]
     #[Migration('2023-12-28T22:10:00+03:00')]
     #[Drop]
     protected ColumnString $name;
     #[Migration('2023-12-28T22:00:00+03:00')]
-    #[Comment('Фамилия')]
+    #[Title('Фамилия')]
     #[Migration('2023-12-28T22:10:00+03:00')]
     #[Name('surname')]
     protected ColumnString $fam;
@@ -131,10 +131,10 @@ ALTER TABLE
 
 Для примера рассмотрим тип **ColumnInteger** - Целое число. Поле содержащие целое число может быть 8, 16, 24, 32, 48 и 64 битным в зависимости от БД. При этом какие БД поддерживают 48 битные целые поля, какие-то нет. Именно поэтому нет команд, которые определяют размерность числа в битах, зато есть команды `MinValue` И `MaxValue` которые определяют минимальное и максимальное значение поля. А уже на основе этих значений драйвер БД определяет какой тип поля необходим для хранения. По умолчанию `MinValue` = PHP_INT_MIN, `MaxValue` = PHP_INT_MAX. Однако эти значения можно переопределить с помощью команд при определении поля.
 ```php
-#[Comment('Таблица для примера')]
+#[Title('Таблица для примера')]
 class TabExample
 {
-    #[Comment('Рост человека, мм')]
+    #[Title('Рост человека, мм')]
     #[MinValue(0)]
     #[MaxValue(4000)]
     protected ColumnInteger $rost;
@@ -148,10 +148,10 @@ CREATE TABLE `tabexample`(
 ```
 По умолчанию значение колонки(поля) может быть NULL. Однако можно переопределить значение по умолчанию с помощью команды `DefaultValue`
 ```php
-#[Comment('Таблица для примера')]
+#[Title('Таблица для примера')]
 class TabExample
 {
-    #[Comment('Рост человека, мм')]
+    #[Title('Рост человека, мм')]
     #[MinValue(0)]
     #[MaxValue(4009)]
     #[DefaultValue(1800)]
@@ -205,7 +205,7 @@ class ColumnJson extends ColumnString
         // Удалить команды
         $this->removeCommand(Seeder::class);
         // Установить команды
-        $this->setCommand(new Comment('Json данные'));
+        $this->setCommand(new Title('Json данные'));
         $this->setCommand(new MaxLength(256 * 256 - 1));
         $this->setCommand(new DefaultValue());
         $this->setCommand(new ConversionInput(self::class . '::inputJson'), false);
@@ -236,15 +236,7 @@ class ColumnJson extends ColumnString
 };
 ```
 
-Теперь чтобы произвести конвертацию данных достаточно из состояния колонки  получить соответствующую команду и вызвать нужный метод. Для добавления данных в состоянии таблицы уже реализован метод **insert** который вызывает методы конвертации:
-```php
-// Вставить в таблицу БД сгенерированные ранее строки
-$rows = $migrations
-    ->database()
-    ->table(TabExample::class)
-    ->insert($pdo, $rows);
-```
-В качестве параметра метод получает объект PDO соединения с БД и строки таблицы.
+Теперь чтобы произвести конвертацию данных достаточно из состояния колонки  получить соответствующую команду и вызвать нужный метод.
 
 # Индексы
 
@@ -270,27 +262,27 @@ $rows = $migrations
 
 В коде ниже демонстрируется пример отношения Многие-к-Одному. Нескольким статьям может соответствовать один пользователь.
 ```php
-#[Comment('Пользователи')]
+#[Title('Пользователи')]
 class User
 {
     //
-    #[Comment('Идентификатор')]
+    #[Title('Идентификатор')]
     protected ColumnId $id;
-    #[Comment('Имя')]
+    #[Title('Имя')]
     protected ColumnString $name;
     #[Columns('id')]
     protected IndexPrimary $pkId;
 }
-#[Comment('Статьи')]
+#[Title('Статьи')]
 class Article
 {
     //
-    #[Comment('Идентификатор')]
+    #[Title('Идентификатор')]
     protected ColumnId $id;
-    #[Comment('Ссылка на автора')]
+    #[Title('Ссылка на автора')]
     #[ReferenceTo(User::class, 'id')]
     protected Reference $userId;
-    #[Comment('Название')]
+    #[Title('Название')]
     protected ColumnString $title;
     #[Columns('id')]
     protected IndexPrimary $pkId;
@@ -298,7 +290,7 @@ class Article
     #[RelTableTo(User::class)]
     #[RelNameTo('articles')]
     #[Columns(['userId' => 'id'])]
-    #[Comment('Автор')]
+    #[Title('Автор')]
     protected RelationManyToOne $author;
 }
 ```

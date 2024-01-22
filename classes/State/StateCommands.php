@@ -10,6 +10,8 @@ class StateCommands
 {
     // Команды
     protected array $commands;
+    // Расширенные данные
+    protected array $extraData = [];
     // Конструктор
     public function __construct(array $commands = [])
     {
@@ -70,5 +72,10 @@ class StateCommands
         if ($this->has($name)) {
             $cb($param, $this->value($name));
         }
+    }
+    // Получить расширенные данные
+    public function getExtraData(string $key, mixed $default = null): mixed
+    {
+        return $this->extraData[$key] ?? $default;
     }
 };

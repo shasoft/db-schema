@@ -2,7 +2,7 @@
 
 namespace Shasoft\DbSchema\State;
 
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\DbSchemaReflection;
 use Shasoft\DbSchema\Command\RelName;
 use Shasoft\DbSchema\Command\HasOne;
@@ -33,7 +33,7 @@ class StateRelation extends StateCommands
     // Описание
     public function comment(): string
     {
-        return $this->value(Comment::class);
+        return $this->value(Title::class);
     }
     // Связь между ОТКУДА=>КУДА
     public function on(): array

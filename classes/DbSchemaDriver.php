@@ -91,25 +91,6 @@ abstract class DbSchemaDriver
                         new DbSchemaCommandsChanges($fromValue, $toValue)
                     )
                 );
-                //*/
-                /*
-                //
-                $valueFrom = serialize($fromValue);
-                $valueTo = serialize($toValue);
-                // Если есть изменения
-                if ($valueFrom != $valueTo) {
-                    //
-                    $ret = array_merge(
-                        $ret,
-                        $this->$methodName(
-                            'Change',
-                            $fromValue,
-                            $toValue,
-                            new DbSchemaCommandsChanges($fromValue, $toValue)
-                        )
-                    );
-                }
-                //*/
             }
         }
         // Создание

@@ -2,12 +2,12 @@
 
 Простой пример определения таблицы БД:
 ```php
-#[Comment('Таблица для примера')]
+#[Title('Таблица для примера')]
 class TabExample
 {
-    #[Comment('Идентификатор')]
+    #[Title('Идентификатор')]
     protected ColumnId $id;
-    #[Comment('Имя')]
+    #[Title('Имя')]
     protected ColumnString $name;
     // Первичный ключ
     #[Columns('id')]

@@ -7,7 +7,7 @@ use Shasoft\DbSchema\Command\Scale;
 use Shasoft\DbSchema\DbSchemaDriver;
 use Shasoft\DbSchema\Index\IndexKey;
 use Shasoft\DbSchema\Command\Columns;
-use Shasoft\DbSchema\Command\Comment;
+use Shasoft\DbSchema\Command\Title;
 use Shasoft\DbSchema\Command\DbSchemaType;
 use Shasoft\DbSchema\Command\MaxValue;
 use Shasoft\DbSchema\Command\MinValue;
@@ -148,7 +148,7 @@ class DbSchemaDriverMySql extends DbSchemaDriver
             $ret .= ($value ? ' AUTO_INCREMENT' : '');
         });
         // Комментарий
-        $stateColumn->valueHas($ret, Comment::class, function (string &$ret, string $value) {
+        $stateColumn->valueHas($ret, Title::class, function (string &$ret, string $value) {
             $ret .= ' COMMENT ' . "'" . addslashes($value) . "'";
         });
         //
@@ -213,7 +213,7 @@ class DbSchemaDriverMySql extends DbSchemaDriver
         }
         $sql = "CREATE TABLE " . $this->quote($this->tabname($state->name())) . " (\n" . implode(", \n", $lines) . "\n )";
         // Комментарий
-        $state->valueHas($sql, Comment::class, function (string &$sql, string $value) {
+        $state->valueHas($sql, Title::class, function (string &$sql, string $value) {
             $sql .= ' COMMENT ' . "'" . addslashes($value) . "'";
         });
         $sql .= ';';
@@ -223,7 +223,7 @@ class DbSchemaDriverMySql extends DbSchemaDriver
     protected function onTableChange(StateTable $stateFrom, StateTable $stateTo, DbSchemaCommandsChanges $changeCommands): array
     {
         if ($changeCommands->count() == 1) {
-            if ($changeCommands->has(Comment::class)) {
+            if ($changeCommands->has(Title::class)) {
                 return [
                     'ALTER TABLE ' .
                         $this->quote($this->tabname($stateTo->name())) .

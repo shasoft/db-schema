@@ -5,7 +5,6 @@ namespace Shasoft\DbSchema;
 class DbSchemaReflection
 {
     // Получить свойство объекта
-    static private array $cacheProperty = [];
     static public function getObjectProperty(object $object, string $name): ?\ReflectionProperty
     {
         $refRet = null;
@@ -40,7 +39,7 @@ class DbSchemaReflection
         }
         // Установить возможность доступа к защищенным и приватным методам
         if (is_null($refRet)) {
-            s_dd($object, $refRet);
+            s_dd($object, $name, $refRet);
         }
         $refRet->setAccessible(true);
         //

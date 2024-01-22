@@ -4,10 +4,11 @@
 
 namespace Shasoft\DbSchema\Reference;
 
-use Shasoft\DbSchema\Command\Create;
 use Shasoft\DbSchema\Command\Name;
+use Shasoft\DbSchema\Command\Create;
 use Shasoft\DbSchema\DbSchemaCommands;
 use Shasoft\DbSchema\Command\ReferenceTo;
+use Shasoft\DbSchema\Command\DefaultValue;
 
 // Ссылка 
 class Reference extends DbSchemaCommands
@@ -24,6 +25,7 @@ class Reference extends DbSchemaCommands
         // Поддерживаемые команды
         $this->addSupportCommand([
             Name::class,
+            //DefaultValue::class
         ]);
     }
 }
